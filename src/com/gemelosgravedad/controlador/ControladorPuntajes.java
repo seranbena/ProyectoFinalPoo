@@ -32,12 +32,6 @@ public final class ControladorPuntajes {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.ROOT);
 
     /**
-     * Crea el controlador del historial.
-     */
-    public ControladorPuntajes() {
-    }
-
-    /**
      * Devuelve la fecha y hora actual con el formato usado en el historial.
      *
      * @return fecha actual en formato {@code dd/MM/yyyy HH:mm}

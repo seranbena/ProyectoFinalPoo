@@ -26,12 +26,6 @@ public final class RegistroPartida {
     private final List<Puntaje> partidas = new ArrayList<>();
 
     /**
-     * Crea un historial vacio.
-     */
-    public RegistroPartida() {
-    }
-
-    /**
      * Agrega una partida al historial si no es nula.
      *
      * @param puntaje resultado que se quiere registrar
@@ -43,21 +37,12 @@ public final class RegistroPartida {
     }
 
     /**
-     * Devuelve una copia de todas las partidas registradas.
-     *
-     * @return lista independiente del historial interno
-     */
-    public List<Puntaje> obtenerTodas() {
-        return new ArrayList<>(partidas);
-    }
-
-    /**
      * Devuelve los mejores resultados ordenados por puntos y tiempo.
      *
      * @return hasta {@value #TAMANO_TOP} resultados, del mejor al peor
      */
     public List<Puntaje> obtenerTop3() {
-        List<Puntaje> copia = obtenerTodas();
+        List<Puntaje> copia = new ArrayList<>(partidas);
         copia.sort(ORDEN_TOP);
         return new ArrayList<>(copia.subList(0, Math.min(TAMANO_TOP, copia.size())));
     }

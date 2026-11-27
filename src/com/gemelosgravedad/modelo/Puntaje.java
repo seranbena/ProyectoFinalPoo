@@ -146,13 +146,4 @@ public final class Puntaje {
     public int getSegundos() {
         return segundos;
     }
-
-    /**
-     * Devuelve la fecha de la partida.
-     *
-     * @return fecha normalizada
-     */
-    public String getFecha() {
-        return fecha;
-    }
 }

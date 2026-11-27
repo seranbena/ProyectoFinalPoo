@@ -25,22 +25,10 @@ public final class BotonEstilo extends JButton {
     private static final int BORDE = 4;
     private static final int SALTO = 7;
     private static final int BARRA = 9;
-    private static final int ANCHO_POR_DEFECTO = 300;
-    private static final int ALTO_POR_DEFECTO = 56;
     private static final int DESPLAZAMIENTO_PULSADO = 3;
 
     /** Color de fondo del boton en estado normal. */
     private final Color colorBase;
-
-    /**
-     * Crea un boton con el tamano por defecto.
-     *
-     * @param texto etiqueta del boton
-     * @param colorBase color de fondo en estado normal
-     */
-    public BotonEstilo(String texto, Color colorBase) {
-        this(texto, colorBase, ANCHO_POR_DEFECTO, ALTO_POR_DEFECTO);
-    }
 
     /**
      * Crea un boton con un tamano concreto.

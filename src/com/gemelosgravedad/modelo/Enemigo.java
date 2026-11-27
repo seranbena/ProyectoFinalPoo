@@ -31,14 +31,4 @@ public abstract class Enemigo extends EntidadDesplazable {
         super(x, y, ancho, alto, velocidad);
         this.sprites = GestorRecursos.cargarCuadros(carpetaSprites, cantidadCuadros);
     }
-
-    /**
-     * Aumenta la velocidad horizontal del enemigo cuando sube la dificultad.
-     *
-     * @param incremento pixeles adicionales por paso
-     */
-    @Override
-    public void aumentarVelocidad(double incremento) {
-        super.aumentarVelocidad(incremento);
-    }
 }

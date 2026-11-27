@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.pantalla;
 
-import com.gemelosgravedad.modelo.Marcador;
+import com.gemelosgravedad.recursos.GestorRecursos;
 import com.gemelosgravedad.vista.componente.BarraBrutal;
 import com.gemelosgravedad.vista.componente.BotonEstilo;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
@@ -14,12 +14,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.io.Serial;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -35,17 +38,16 @@ public final class PantallaBienvenida extends PantallaBase {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final String[] DETALLES = {
-        "EL PISO ESTÁ ROTO: BUSCA LAS PLATAFORMAS.",
-        "SI CAES AL VACÍO, PIERDES UNA VIDA.",
-        "LA SOGA UNE A LOS DOS GEMELOS.",
-        "EL ORBE MORADO INTERCAMBIA SUS PUESTOS."
-    };
+    private static final String RUTA_LOGO = "imagenes/logo_uam.png";
+    private static final String MATERIA = "PROGRAMACIÓN ORIENTADA A OBJETOS";
+    private static final String INTEGRANTES = "INTEGRANTES: Sergio Andres Naranjo Benavides";
     private static final int ANCHO_POSTER = 500;
     private static final int ALTO_POSTER = 404;
     private static final int ANCHO_MENU = 348;
     private static final int ANCHO_BOTON = 340;
     private static final int ALTO_BOTON = 62;
+    private static final int ALTO_LOGO = 34;
+    private static final int ANCHO_LOGO_MAXIMO = 140;
 
     /** Boton que inicia el flujo de nueva partida. */
     private final BotonEstilo botonJugar;
@@ -72,9 +74,8 @@ public final class PantallaBienvenida extends PantallaBase {
                 ANCHO_BOTON, ALTO_BOTON);
         botonSalir = new BotonEstilo("SALIR", EstiloBrutal.ROJO,
                 ANCHO_BOTON, ALTO_BOTON);
-        montar("GD—02 / SISTEMA DE GRAVEDAD", "ARCADE // MODO LOCAL",
-                "POO / JAVA 21", crearCentro(),
-                "← → MOVER   //   ESPACIO SALTAR", "P PAUSA   //   ESC MENÚ");
+        montar("", "BIENVENIDO", MATERIA, crearCentro(), INTEGRANTES,
+                "← → MOVER // ESPACIO SALTAR // ESC MENÚ");
     }
 
     /**
@@ -103,50 +104,18 @@ public final class PantallaBienvenida extends PantallaBase {
     }
 
     /**
-     * Crea el cartel con el titulo y las reglas resumidas.
+     * Crea el cartel con el titulo y la leyenda.
      *
      * @return cartel de bienvenida
      */
     private JPanel crearPoster() {
-        JPanel poster = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                try {
-                    int ancho = getWidth() - 10;
-                    int alto = getHeight() - 10;
-                    g2.setColor(EstiloBrutal.AMARILLO);
-                    g2.fillRect(10, 10, ancho, alto);
-                    g2.setColor(EstiloBrutal.NEGRO);
-                    g2.fillRect(0, 0, ancho, alto);
-                    g2.setColor(EstiloBrutal.AMARILLO);
-                    g2.fillRect(ancho - 8, 0, 8, alto);
-                    g2.setColor(EstiloBrutal.NEGRO);
-                    g2.setStroke(new java.awt.BasicStroke(5f));
-                    g2.drawRect(2, 2, ancho - 4, alto - 4);
-                } finally {
-                    g2.dispose();
-                }
-                super.paintComponent(g);
-            }
-        };
-        poster.setOpaque(false);
-        poster.setLayout(new BoxLayout(poster, BoxLayout.Y_AXIS));
-        poster.setBorder(BorderFactory.createEmptyBorder(22, 30, 24, 30));
-        poster.setPreferredSize(new Dimension(ANCHO_POSTER, ALTO_POSTER));
-        poster.setMinimumSize(new Dimension(ANCHO_POSTER, ALTO_POSTER));
+        JPanel poster = getJPanel();
 
-        JPanel sellos = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        sellos.setOpaque(false);
-        sellos.setAlignmentX(Component.LEFT_ALIGNMENT);
-        sellos.add(BarraBrutal.chip("GD—02", EstiloBrutal.AMARILLO, EstiloBrutal.NEGRO));
-        sellos.add(BarraBrutal.chip("UNIDAD DE ENTRENAMIENTO",
-                EstiloBrutal.PAPEL, EstiloBrutal.NEGRO));
         JPanel filaSellos = new JPanel(new BorderLayout());
         filaSellos.setOpaque(false);
         filaSellos.setAlignmentX(Component.LEFT_ALIGNMENT);
-        filaSellos.add(sellos, BorderLayout.WEST);
-        filaSellos.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+        filaSellos.add(crearLogo(), BorderLayout.EAST);
+        filaSellos.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         poster.add(filaSellos);
         poster.add(Box.createVerticalStrut(16));
 
@@ -177,11 +146,6 @@ public final class PantallaBienvenida extends PantallaBase {
         lema.setAlignmentX(Component.LEFT_ALIGNMENT);
         lema.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
         poster.add(lema);
-        poster.add(Box.createVerticalStrut(8));
-
-        for (String detalle : DETALLES) {
-            poster.add(crearDetalle(detalle));
-        }
         poster.add(Box.createVerticalGlue());
 
         JPanel leyenda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -195,19 +159,71 @@ public final class PantallaBienvenida extends PantallaBase {
         return poster;
     }
 
+    private JPanel getJPanel() {
+        JPanel poster = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                try {
+                    int ancho = getWidth() - 10;
+                    int alto = getHeight() - 10;
+                    g2.setColor(EstiloBrutal.AMARILLO);
+                    g2.fillRect(10, 10, ancho, alto);
+                    g2.setColor(EstiloBrutal.NEGRO);
+                    g2.fillRect(0, 0, ancho, alto);
+                    g2.setColor(EstiloBrutal.AMARILLO);
+                    g2.fillRect(ancho - 8, 0, 8, alto);
+                    g2.setColor(EstiloBrutal.NEGRO);
+                    g2.setStroke(new java.awt.BasicStroke(5f));
+                    g2.drawRect(2, 2, ancho - 4, alto - 4);
+                } finally {
+                    g2.dispose();
+                }
+                super.paintComponent(g);
+            }
+        };
+        poster.setOpaque(false);
+        poster.setLayout(new BoxLayout(poster, BoxLayout.Y_AXIS));
+        poster.setBorder(BorderFactory.createEmptyBorder(22, 30, 24, 30));
+        poster.setPreferredSize(new Dimension(ANCHO_POSTER, ALTO_POSTER));
+        poster.setMinimumSize(new Dimension(ANCHO_POSTER, ALTO_POSTER));
+        return poster;
+    }
+
     /**
-     * Crea una linea de detalle del cartel.
+     * Carga el logo de la UAM desde {@code resources}.
      *
-     * @param texto contenido de la linea
-     * @return etiqueta configurada
+     * <p>Si la imagen no existe, se muestra un chip con las siglas para no
+     * dejar el hueco vacio.</p>
+     *
+     * @return etiqueta con el logo o chip de respaldo
      */
-    private JLabel crearDetalle(String texto) {
-        JLabel detalle = new JLabel(texto);
-        detalle.setFont(EstiloBrutal.monoNormal(12));
-        detalle.setForeground(EstiloBrutal.GRIS_CLARO);
-        detalle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        detalle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 19));
-        return detalle;
+    private JComponent crearLogo() {
+        Image imagen = GestorRecursos.cargarImagen(RUTA_LOGO);
+        if (imagen == null) {
+            return BarraBrutal.chip("UAM", EstiloBrutal.PAPEL, EstiloBrutal.NEGRO);
+        }
+        int anchoOriginal = imagen.getWidth(null);
+        int altoOriginal = imagen.getHeight(null);
+        if (anchoOriginal <= 0 || altoOriginal <= 0) {
+            return BarraBrutal.chip("UAM", EstiloBrutal.PAPEL, EstiloBrutal.NEGRO);
+        }
+        int ancho = Math.max(1, anchoOriginal * ALTO_LOGO / altoOriginal);
+        int alto = ALTO_LOGO;
+        if (ancho > ANCHO_LOGO_MAXIMO) {
+            ancho = ANCHO_LOGO_MAXIMO;
+            alto = Math.max(1, altoOriginal * ancho / anchoOriginal);
+        }
+        Image escalada = imagen.getScaledInstance(ancho, alto,
+                Image.SCALE_SMOOTH);
+        JLabel logo = new JLabel(new ImageIcon(escalada));
+        logo.setOpaque(true);
+        logo.setBackground(EstiloBrutal.NEGRO);
+        logo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(EstiloBrutal.NEGRO, 2),
+                BorderFactory.createEmptyBorder(2, 6, 2, 6)));
+        logo.setToolTipText("Universidad Autónoma de Manizales");
+        return logo;
     }
 
     /**
@@ -250,12 +266,6 @@ public final class PantallaBienvenida extends PantallaBase {
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         menu.setPreferredSize(new Dimension(ANCHO_MENU, ALTO_POSTER));
 
-        JLabel rotulo = BarraBrutal.chip("SELECCIONA UNA OPCIÓN",
-                EstiloBrutal.NEGRO, EstiloBrutal.PAPEL);
-        rotulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        menu.add(rotulo);
-        menu.add(Box.createVerticalStrut(18));
-
         menu.add(botonJugar);
         menu.add(Box.createVerticalStrut(14));
         menu.add(botonInstrucciones);
@@ -263,15 +273,6 @@ public final class PantallaBienvenida extends PantallaBase {
         menu.add(botonTop3);
         menu.add(Box.createVerticalStrut(14));
         menu.add(botonSalir);
-        menu.add(Box.createVerticalStrut(20));
-
-        JLabel nota = new JLabel(Marcador.VIDAS_INICIALES
-                + " VIDAS // DIFICULTAD PROGRESIVA", SwingConstants.CENTER);
-        nota.setFont(EstiloBrutal.mono(10));
-        nota.setForeground(EstiloBrutal.GRIS);
-        nota.setAlignmentX(Component.CENTER_ALIGNMENT);
-        nota.setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));
-        menu.add(nota);
         menu.add(Box.createVerticalGlue());
         return menu;
     }

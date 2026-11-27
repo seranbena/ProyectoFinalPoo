@@ -21,7 +21,7 @@ public final class Main {
 
     private static final Logger REGISTRO = Logger.getLogger(Main.class.getName());
 
-    private Main() {
+    private Main  () {
     }
 
     /**

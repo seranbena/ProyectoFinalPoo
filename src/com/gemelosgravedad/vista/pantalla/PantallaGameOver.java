@@ -43,9 +43,6 @@ public final class PantallaGameOver extends PantallaBase {
     /** Etiqueta con el tiempo sobrevivido. */
     private final JLabel etiquetaTiempo;
 
-    /** Etiqueta con la fecha de la partida. */
-    private final JLabel etiquetaFecha;
-
     /** Boton que repite la partida con el mismo jugador. */
     private final BotonEstilo botonReiniciar;
 
@@ -60,14 +57,11 @@ public final class PantallaGameOver extends PantallaBase {
         etiquetaNombre = new JLabel("—");
         etiquetaPuntos = new JLabel("0", SwingConstants.LEFT);
         etiquetaTiempo = new JLabel("TIEMPO: 00:00");
-        etiquetaFecha = new JLabel("FECHA: —");
         botonReiniciar = new BotonEstilo("REINICIAR", EstiloBrutal.AMARILLO,
                 ANCHO_BOTON, ALTO_BOTON);
         botonMenu = new BotonEstilo("MENÚ PRINCIPAL", EstiloBrutal.AZUL,
                 ANCHO_BOTON, ALTO_BOTON);
-        montar("RESULTADO FINAL", "FIN DE LA PARTIDA",
-                "GD—02 / PARTIDA CERRADA", crearCentro(),
-                "LA GRAVEDAD SIEMPRE COBRA SU PRECIO", RUTA_HISTORIAL);
+        montar("", "FIN DE LA PARTIDA", "", crearCentro(), "", "");
     }
 
     /**
@@ -105,13 +99,6 @@ public final class PantallaGameOver extends PantallaBase {
         cartel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 30));
         cartel.setPreferredSize(new Dimension(ANCHO_CARTEL, ALTO_PANEL));
 
-        JLabel rotulo = new JLabel("RESULTADO // 01");
-        rotulo.setFont(EstiloBrutal.mono(11));
-        rotulo.setForeground(EstiloBrutal.NEGRO);
-        rotulo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        cartel.add(rotulo);
-        cartel.add(Box.createVerticalStrut(18));
-
         TextoDuro linea1 = new TextoDuro("GAME", EstiloBrutal.titulo(58),
                 EstiloBrutal.NEGRO, EstiloBrutal.AMARILLO, 6);
         linea1.setAlineacion(SwingConstants.LEFT);
@@ -131,19 +118,6 @@ public final class PantallaGameOver extends PantallaBase {
         regla.setPreferredSize(new Dimension(300, 5));
         regla.setAlignmentX(Component.LEFT_ALIGNMENT);
         cartel.add(regla);
-        cartel.add(Box.createVerticalStrut(14));
-
-        JLabel lema = new JLabel("LA GRAVEDAD SIEMPRE");
-        lema.setFont(EstiloBrutal.mono(13));
-        lema.setForeground(EstiloBrutal.NEGRO);
-        lema.setAlignmentX(Component.LEFT_ALIGNMENT);
-        cartel.add(lema);
-
-        JLabel lema2 = new JLabel("COBRA SU PRECIO.");
-        lema2.setFont(EstiloBrutal.mono(13));
-        lema2.setForeground(EstiloBrutal.NEGRO);
-        lema2.setAlignmentX(Component.LEFT_ALIGNMENT);
-        cartel.add(lema2);
         cartel.add(Box.createVerticalGlue());
 
         JPanel marcas = new JPanel();
@@ -166,21 +140,6 @@ public final class PantallaGameOver extends PantallaBase {
         }
         marcas.add(Box.createHorizontalGlue());
         cartel.add(marcas);
-        cartel.add(Box.createVerticalStrut(16));
-
-        JLabel archivo = new JLabel("PARTIDA ARCHIVADA EN");
-        archivo.setFont(EstiloBrutal.mono(9));
-        archivo.setForeground(EstiloBrutal.NEGRO);
-        archivo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        archivo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
-        cartel.add(archivo);
-
-        JLabel ruta = new JLabel(RUTA_HISTORIAL);
-        ruta.setFont(EstiloBrutal.mono(10));
-        ruta.setForeground(EstiloBrutal.PAPEL);
-        ruta.setAlignmentX(Component.LEFT_ALIGNMENT);
-        ruta.setMaximumSize(new Dimension(Integer.MAX_VALUE, 16));
-        cartel.add(ruta);
         return cartel;
     }
 
@@ -232,13 +191,6 @@ public final class PantallaGameOver extends PantallaBase {
         etiquetaTiempo.setAlignmentX(Component.LEFT_ALIGNMENT);
         etiquetaTiempo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));
         resultados.add(etiquetaTiempo);
-        resultados.add(Box.createVerticalStrut(2));
-
-        etiquetaFecha.setFont(EstiloBrutal.monoNormal(11));
-        etiquetaFecha.setForeground(EstiloBrutal.GRIS);
-        etiquetaFecha.setAlignmentX(Component.LEFT_ALIGNMENT);
-        etiquetaFecha.setMaximumSize(new Dimension(Integer.MAX_VALUE, 16));
-        resultados.add(etiquetaFecha);
         resultados.add(Box.createVerticalGlue());
 
         JPanel zonaBotones = new JPanel();
@@ -265,7 +217,6 @@ public final class PantallaGameOver extends PantallaBase {
         etiquetaNombre.setText(resultado.getNombre());
         etiquetaPuntos.setText(String.valueOf(resultado.getPuntos()));
         etiquetaTiempo.setText("TIEMPO: " + resultado.getTiempoTexto());
-        etiquetaFecha.setText("FECHA: " + resultado.getFecha());
     }
 
     /**

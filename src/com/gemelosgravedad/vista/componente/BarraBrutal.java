@@ -118,30 +118,18 @@ public final class BarraBrutal {
     }
 
     /**
-     * Crea una zona de acciones con una pista a la izquierda y los botones
-     * alineados a la derecha.
+     * Crea una zona de acciones con los botones alineados a la derecha.
      *
-     * @param pista texto explicativo
      * @param botones botones que se colocan en el extremo derecho
      * @return panel de acciones
      */
-    public static JPanel acciones(String pista, JComponent... botones) {
-        JPanel acciones = new JPanel(new BorderLayout(SEPARACION, 0));
+    public static JPanel acciones(JComponent... botones) {
+        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         acciones.setOpaque(false);
         acciones.setBorder(BorderFactory.createEmptyBorder(14, 0, 0, 0));
-
-        JLabel pistaEtiqueta = new JLabel(pista);
-        pistaEtiqueta.setFont(EstiloBrutal.mono(10));
-        pistaEtiqueta.setForeground(EstiloBrutal.GRIS);
-        pistaEtiqueta.setVerticalAlignment(SwingConstants.CENTER);
-        acciones.add(pistaEtiqueta, BorderLayout.CENTER);
-
-        JPanel zonaBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        zonaBotones.setOpaque(false);
         for (JComponent boton : botones) {
-            zonaBotones.add(boton);
+            acciones.add(boton);
         }
-        acciones.add(zonaBotones, BorderLayout.EAST);
         return acciones;
     }
 }

@@ -23,14 +23,14 @@ public abstract class PantallaBase extends PanelFondo {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** Ruta mostrada al jugador para el archivo de records. */
-    protected static final String RUTA_HISTORIAL = "DATA/HISTORIAL.TXT";
+    /** Ruta de la imagen de fondo compartida por las pantallas de menu. */
+    protected static final String RUTA_FONDO = "imagenes/fondo_bienvenida.png";
 
     /**
-     * Crea una pantalla sin contenido central.
+     * Crea una pantalla con el fondo comun de los menus.
      */
     protected PantallaBase() {
-        super();
+        super(RUTA_FONDO);
     }
 
     /**

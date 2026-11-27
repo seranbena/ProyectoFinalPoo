@@ -143,21 +143,6 @@ public final class EstiloBrutal {
     }
 
     /**
-     * Dibuja texto con una sombra solida de tres pixeles.
-     *
-     * @param g contexto grafico
-     * @param texto texto que se quiere dibujar
-     * @param x coordenada horizontal del texto
-     * @param y linea base del texto
-     * @param color color principal
-     * @param sombra color de la sombra
-     */
-    public static void textoDuro(Graphics2D g, String texto, int x, int y,
-                                 Color color, Color sombra) {
-        textoDuro(g, texto, x, y, color, sombra, 3);
-    }
-
-    /**
      * Dibuja texto con una sombra solida del desplazamiento indicado.
      *
      * @param g contexto grafico

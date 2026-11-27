@@ -54,10 +54,8 @@ public final class PantallaTop3 extends PantallaBase {
         filas = new JPanel();
         botonVolver = new BotonEstilo("VOLVER", EstiloBrutal.AZUL,
                 ANCHO_BOTON, ALTO_BOTON);
-        montar("ARCHIVO DE RÉCORDS", "TOP " + RegistroPartida.TAMANO_TOP,
-                "GD—02 / HISTORIAL", crearCentro(),
-                "ARCHIVO GD—02 // SOLO LOS MEJORES",
-                RUTA_HISTORIAL);
+        montar("", "TOP " + RegistroPartida.TAMANO_TOP, "", crearCentro(),
+                "", "");
     }
 
     /**
@@ -83,12 +81,6 @@ public final class PantallaTop3 extends PantallaBase {
         titulo.setFont(EstiloBrutal.titulo(13));
         titulo.setForeground(EstiloBrutal.AMARILLO);
         cabecera.add(titulo, BorderLayout.WEST);
-
-        JLabel nota = new JLabel("ORDEN DESCENDENTE");
-        nota.setFont(EstiloBrutal.mono(10));
-        nota.setForeground(EstiloBrutal.GRIS_CLARO);
-        nota.setHorizontalAlignment(SwingConstants.RIGHT);
-        cabecera.add(nota, BorderLayout.EAST);
         tabla.add(cabecera, BorderLayout.NORTH);
 
         filas.setOpaque(false);
@@ -97,9 +89,8 @@ public final class PantallaTop3 extends PantallaBase {
         tabla.add(filas, BorderLayout.CENTER);
 
         principal.add(tabla, BorderLayout.CENTER);
-        principal.add(BarraBrutal.acciones(
-                "EL HISTORIAL SE ACTUALIZA AL TERMINAR CADA PARTIDA.",
-                botonVolver), BorderLayout.SOUTH);
+        principal.add(BarraBrutal.acciones(botonVolver),
+                BorderLayout.SOUTH);
         return principal;
     }
 
@@ -139,17 +130,11 @@ public final class PantallaTop3 extends PantallaBase {
         filas.add(vacio);
         filas.add(Box.createVerticalStrut(8));
 
-        JLabel detalle = new JLabel("TODAVÍA NO HAY PARTIDAS GUARDADAS.");
-        detalle.setFont(EstiloBrutal.mono(12));
+        JLabel detalle = new JLabel("JUEGA UNA PARTIDA PARA VER TU TOP 3.");
+        detalle.setFont(EstiloBrutal.monoNormal(11));
         detalle.setForeground(EstiloBrutal.GRIS);
         detalle.setAlignmentX(Component.CENTER_ALIGNMENT);
         filas.add(detalle);
-
-        JLabel detalle2 = new JLabel("JUEGA UNA Y VUELVE A ESTA PANTALLA.");
-        detalle2.setFont(EstiloBrutal.monoNormal(11));
-        detalle2.setForeground(EstiloBrutal.GRIS);
-        detalle2.setAlignmentX(Component.CENTER_ALIGNMENT);
-        filas.add(detalle2);
 
         filas.add(Box.createVerticalGlue());
     }
@@ -163,12 +148,12 @@ public final class PantallaTop3 extends PantallaBase {
         cabecera.setBorder(BorderFactory.createEmptyBorder(0, 12, 6, 18));
         cabecera.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
 
-        JLabel izquierda = new JLabel("RANGO / JUGADOR");
+        JLabel izquierda = new JLabel("JUGADOR");
         izquierda.setFont(EstiloBrutal.mono(10));
         izquierda.setForeground(EstiloBrutal.GRIS);
         cabecera.add(izquierda, BorderLayout.WEST);
 
-        JLabel derecha = new JLabel("PUNTOS / TIEMPO / FECHA");
+        JLabel derecha = new JLabel("PUNTOS / TIEMPO");
         derecha.setFont(EstiloBrutal.mono(10));
         derecha.setForeground(EstiloBrutal.GRIS);
         derecha.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -235,8 +220,8 @@ public final class PantallaTop3 extends PantallaBase {
         datos.add(puntos);
         datos.add(Box.createVerticalStrut(3));
 
-        JLabel detalle = new JLabel(puntaje.getTiempoTexto() + "  //  "
-                + puntaje.getFecha(), SwingConstants.RIGHT);
+        JLabel detalle = new JLabel(puntaje.getTiempoTexto(),
+                SwingConstants.RIGHT);
         detalle.setFont(EstiloBrutal.monoNormal(9));
         detalle.setForeground(EstiloBrutal.GRIS);
         detalle.setAlignmentX(Component.LEFT_ALIGNMENT);

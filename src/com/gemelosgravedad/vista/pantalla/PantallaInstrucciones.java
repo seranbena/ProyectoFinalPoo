@@ -48,8 +48,7 @@ public final class PantallaInstrucciones extends PantallaBase {
         super();
         botonVolver = new BotonEstilo("VOLVER", EstiloBrutal.AZUL,
                 ANCHO_BOTON, ALTO_BOTON);
-        montar("MANUAL DE OPERACIÓN", "CÓMO JUGAR", "GD—02 / 07 SECCIONES",
-                crearCentro(), "MANUAL GD—02 // REVISIÓN A",
+        montar("", "CÓMO JUGAR", "", crearCentro(), "",
                 "P PAUSA // ESC MENÚ");
     }
 
@@ -63,8 +62,7 @@ public final class PantallaInstrucciones extends PantallaBase {
         principal.setOpaque(false);
         principal.setBorder(BorderFactory.createEmptyBorder(20, 42, 8, 42));
         principal.add(crearColumnas(), BorderLayout.CENTER);
-        principal.add(BarraBrutal.acciones(
-                "TODAS LAS SECCIONES CABEN EN UNA PARTIDA.", botonVolver),
+        principal.add(BarraBrutal.acciones(botonVolver),
                 BorderLayout.SOUTH);
         return principal;
     }
@@ -89,14 +87,12 @@ public final class PantallaInstrucciones extends PantallaBase {
         linea(izquierda, "P   PAUSA        ESC   MENÚ", EstiloBrutal.NEGRO, false);
 
         seccion(izquierda, "02 // OBJETIVO", EstiloBrutal.AMARILLO);
-        linea(izquierda, "SOBREVIVE EL MAYOR TIEMPO POSIBLE.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "EL TIEMPO SUMA 2 PUNTOS POR SEGUNDO.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "CADA 10 SEGUNDOS SUBE LA DIFICULTAD.", EstiloBrutal.NEGRO, false);
 
         seccion(izquierda, "03 // CRISTALES", EstiloBrutal.AMARILLO);
         linea(izquierda, "CADA CRISTAL VALE 25 PUNTOS.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "APARECEN EN EL PISO O EN EL TECHO.", EstiloBrutal.NEGRO, false);
-        linea(izquierda, "LLÉVALO AL GEMELO CORRECTO.", EstiloBrutal.NEGRO, false);
 
         seccion(izquierda, "04 // HUECOS, PLATAFORMAS Y SOGA",
                 EstiloBrutal.AMARILLO);
@@ -131,7 +127,6 @@ public final class PantallaInstrucciones extends PantallaBase {
         seccion(derecha, "07 // VIDAS Y EXTRA", EstiloBrutal.AMARILLO);
         linea(derecha, "EMPIEZAS CON 3 VIDAS.", EstiloBrutal.NEGRO, false);
         linea(derecha, "TRAS UN GOLPE: 2 S INVULNERABLE.", EstiloBrutal.NEGRO, false);
-        linea(derecha, "EL PARPADEO TE DELATA.", EstiloBrutal.NEGRO, false);
         linea(derecha, "ENEMIGO DESTRUIDO CON TURBO: +50.", EstiloBrutal.NEGRO, false);
         derecha.add(Box.createVerticalGlue());
         columnas.add(derecha);
