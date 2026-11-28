@@ -1,8 +1,14 @@
-### IntelliJ IDEA ###
+### Proyecto ###
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+*.class
+data/historial.txt
+
+### IntelliJ IDEA ###
+.idea/
 .kotlin
+
+### VS Code ###
+.vscode/
 
 ### Eclipse ###
 .apt_generated
@@ -13,8 +19,6 @@ out/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
 ### NetBeans ###
 /nbproject/private/
@@ -22,9 +26,6 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
-.vscode/
 
 ### Mac OS ###
 .DS_Store

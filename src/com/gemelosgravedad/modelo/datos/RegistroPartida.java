@@ -1,0 +1,51 @@
+package com.gemelosgravedad.modelo.datos;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Historial de partidas y calculo del Top 3.
+ *
+ * <p>El orden es descendente por puntos y, en caso de empate, por tiempo
+ * sobrevivido. El comparador se define una sola vez para que cualquier consulta
+ * del historial use el mismo criterio.</p>
+ *
+ * @see Puntaje
+ * @see com.gemelosgravedad.controlador.ControladorPuntajes
+ */
+public final class RegistroPartida {
+
+    /** Numero de resultados que se muestran en la tabla de records. */
+    public static final int TAMANO_TOP = 3;
+
+    private static final Comparator<Puntaje> ORDEN_TOP = Comparator
+            .comparingInt(Puntaje::puntos)
+            .thenComparingInt(Puntaje::segundos)
+            .reversed();
+
+    private final List<Puntaje> partidas = new ArrayList<>();
+
+    /**
+     * Agrega una partida al historial si no es nula.
+     *
+     * @param puntaje resultado que se quiere registrar
+     */
+    public void agregar(Puntaje puntaje) {
+        if (puntaje != null) {
+            partidas.add(puntaje);
+        }
+    }
+
+    /**
+     * Devuelve los mejores resultados ordenados por puntos y tiempo.
+     *
+     * @return hasta {@value #TAMANO_TOP} resultados, del mejor al peor
+     */
+    public List<Puntaje> obtenerTop3() {
+        return partidas.stream()
+                .sorted(ORDEN_TOP)
+                .limit(TAMANO_TOP)
+                .toList();
+    }
+}
