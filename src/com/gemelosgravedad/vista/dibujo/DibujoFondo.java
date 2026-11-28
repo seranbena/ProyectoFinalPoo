@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.dibujo;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -37,6 +37,11 @@ public final class DibujoFondo {
     private static final int ALTO_MARCA_GD = 170;
     private static final int X_MARCA_GD = 700;
     private static final int Y_MARCA_GD = 430;
+    private static final BasicStroke TRAZO_FINO = new BasicStroke(1f);
+    private static final BasicStroke TRAZO_MEDIO = new BasicStroke(2f);
+    private static final BasicStroke TRAZO_CENTRAL = new BasicStroke(2f,
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f,
+            new float[]{10f, 16f}, 0f);
 
     private DibujoFondo() {
     }
@@ -74,7 +79,7 @@ public final class DibujoFondo {
         int techo = EstadoJuego.TECHO;
         int piso = EstadoJuego.PISO;
 
-        g.setStroke(new BasicStroke(1f));
+        g.setStroke(TRAZO_FINO);
         g.setColor(REJILLA);
         for (int x = 0; x <= EstadoJuego.ANCHO; x += PASO_REJILLA) {
             g.drawLine(x, techo, x, piso);
@@ -83,7 +88,7 @@ public final class DibujoFondo {
             g.drawLine(0, y, EstadoJuego.ANCHO, y);
         }
 
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_MEDIO);
         g.setColor(REJILLA_FUERTE);
         for (int x = 0; x <= EstadoJuego.ANCHO; x += PASO_REJILLA_FUERTE) {
             g.drawLine(x, techo, x, piso);
@@ -100,8 +105,7 @@ public final class DibujoFondo {
         }
 
         g.setColor(LINEA_CENTRAL);
-        g.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                1f, new float[]{10f, 16f}, 0f));
+        g.setStroke(TRAZO_CENTRAL);
         g.drawLine(EstadoJuego.ANCHO / 2, techo + 10,
                 EstadoJuego.ANCHO / 2, piso - 10);
 

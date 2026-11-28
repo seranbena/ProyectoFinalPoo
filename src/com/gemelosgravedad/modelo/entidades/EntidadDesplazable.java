@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
 /**
  * Entidad que avanza horizontalmente de derecha a izquierda.
@@ -11,7 +11,8 @@ package com.gemelosgravedad.modelo;
  * @see Enemigo
  * @see ObjetoFlotante
  */
-public abstract class EntidadDesplazable extends Entidad {
+public abstract sealed class EntidadDesplazable extends Entidad
+        permits Cristal, Enemigo, ObjetoFlotante {
 
     /** Margen por defecto que se deja antes de desactivar una entidad. */
     private static final int MARGEN_SALIDA_POR_DEFECTO = 30;

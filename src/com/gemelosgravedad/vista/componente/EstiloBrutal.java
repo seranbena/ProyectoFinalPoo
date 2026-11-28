@@ -15,6 +15,9 @@ import java.awt.Shape;
  */
 public final class EstiloBrutal {
 
+    private static final BasicStroke TRAZO_PANEL = new BasicStroke(4f);
+    private static final BasicStroke TRAZO_BORDE_FINO = new BasicStroke(2f);
+
     /** Negro base de bordes, sombras y fondos. */
     public static final Color NEGRO = new Color(18, 18, 18);
 
@@ -111,7 +114,7 @@ public final class EstiloBrutal {
         g.setColor(fondo);
         g.fillRect(x, y, ancho, alto);
         g.setColor(NEGRO);
-        g.setStroke(new BasicStroke(4f));
+        g.setStroke(TRAZO_PANEL);
         g.drawRect(x + 2, y + 2, ancho - 4, alto - 4);
     }
 
@@ -138,7 +141,7 @@ public final class EstiloBrutal {
         }
         g.setClip(recorte);
         g.setColor(NEGRO);
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_BORDE_FINO);
         g.drawRect(x, y, ancho - 1, alto - 1);
     }
 

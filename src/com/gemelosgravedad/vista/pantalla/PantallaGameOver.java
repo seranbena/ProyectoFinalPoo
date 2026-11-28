@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.pantalla;
 
-import com.gemelosgravedad.modelo.Puntaje;
+import com.gemelosgravedad.modelo.datos.Puntaje;
 import com.gemelosgravedad.vista.componente.BarraBrutal;
 import com.gemelosgravedad.vista.componente.BotonEstilo;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
@@ -34,8 +34,11 @@ public final class PantallaGameOver extends PantallaBase {
     private static final int ANCHO_BOTON = 352;
     private static final int ALTO_BOTON = 52;
 
-    /** Etiqueta con el nombre del jugador. */
+    /** Etiqueta con el nombre del jugador o del equipo. */
     private final JLabel etiquetaNombre;
+
+    /** Rotulo que indica si el resultado es individual o de equipo. */
+    private final JLabel rotuloNombre;
 
     /** Etiqueta con el puntaje final. */
     private final JLabel etiquetaPuntos;
@@ -55,6 +58,7 @@ public final class PantallaGameOver extends PantallaBase {
     public PantallaGameOver() {
         super();
         etiquetaNombre = new JLabel("—");
+        rotuloNombre = new JLabel("JUGADOR");
         etiquetaPuntos = new JLabel("0", SwingConstants.LEFT);
         etiquetaTiempo = new JLabel("TIEMPO: 00:00");
         botonReiniciar = new BotonEstilo("REINICIAR", EstiloBrutal.AMARILLO,
@@ -155,7 +159,6 @@ public final class PantallaGameOver extends PantallaBase {
         resultados.setBorder(BorderFactory.createEmptyBorder(22, 28, 22, 34));
         resultados.setPreferredSize(new Dimension(ANCHO_RESULTADOS, ALTO_PANEL));
 
-        JLabel rotuloNombre = new JLabel("JUGADOR");
         rotuloNombre.setFont(EstiloBrutal.mono(10));
         rotuloNombre.setForeground(EstiloBrutal.GRIS);
         rotuloNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -214,9 +217,20 @@ public final class PantallaGameOver extends PantallaBase {
         if (resultado == null) {
             return;
         }
-        etiquetaNombre.setText(resultado.getNombre());
-        etiquetaPuntos.setText(String.valueOf(resultado.getPuntos()));
+        etiquetaNombre.setText(resultado.nombre());
+        etiquetaPuntos.setText(String.valueOf(resultado.puntos()));
         etiquetaTiempo.setText("TIEMPO: " + resultado.getTiempoTexto());
+    }
+
+    /**
+     * Rellena la pantalla y ajusta el rotulo al modo de juego.
+     *
+     * @param resultado resultado que se quiere mostrar
+     * @param dosJugadores {@code true} si el resultado es de un equipo
+     */
+    public void setDatos(Puntaje resultado, boolean dosJugadores) {
+        rotuloNombre.setText(dosJugadores ? "EQUIPO" : "JUGADOR");
+        setDatos(resultado);
     }
 
     /**

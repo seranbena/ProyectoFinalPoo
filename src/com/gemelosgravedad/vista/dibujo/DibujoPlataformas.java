@@ -1,7 +1,7 @@
 package com.gemelosgravedad.vista.dibujo;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
-import com.gemelosgravedad.modelo.Plataforma;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
+import com.gemelosgravedad.modelo.datos.Plataforma;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -41,6 +41,9 @@ public final class DibujoPlataformas {
     private static final int ANCHO_SENAL = 78;
     private static final int ALTO_SENAL = 20;
     private static final int RAYOS_POR_HUECO = 3;
+    private static final BasicStroke TRAZO_GRUESO = new BasicStroke(3f);
+    private static final BasicStroke TRAZO_MEDIO = new BasicStroke(2.5f);
+    private static final BasicStroke TRAZO_FINO = new BasicStroke(2f);
 
     private DibujoPlataformas() {
     }
@@ -59,8 +62,8 @@ public final class DibujoPlataformas {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        List<Hueco> huecosPiso = buscarHuecos(plataformas, Plataforma.SUELO);
-        List<Hueco> huecosTecho = buscarHuecos(plataformas, Plataforma.TECHO);
+        List<Hueco> huecosPiso = buscarHuecos(plataformas, Plataforma.Tipo.SUELO);
+        List<Hueco> huecosTecho = buscarHuecos(plataformas, Plataforma.Tipo.TECHO);
 
         for (Hueco hueco : huecosPiso) {
             dibujarHuecoPiso(g, hueco, tick);
@@ -70,12 +73,10 @@ public final class DibujoPlataformas {
         }
 
         for (Plataforma plataforma : plataformas) {
-            if (plataforma.getTipo() == Plataforma.SUELO) {
-                dibujarSuelo(g, plataforma);
-            } else if (plataforma.getTipo() == Plataforma.TECHO) {
-                dibujarTecho(g, plataforma);
-            } else {
-                dibujarFlotante(g, plataforma);
+            switch (plataforma.tipo()) {
+                case SUELO -> dibujarSuelo(g, plataforma);
+                case TECHO -> dibujarTecho(g, plataforma);
+                case FLOTANTE -> dibujarFlotante(g, plataforma);
             }
         }
 
@@ -94,35 +95,24 @@ public final class DibujoPlataformas {
      * @param tipo tipo de tramo que se quiere analizar
      * @return huecos con ancho positivo
      */
-    private static List<Hueco> buscarHuecos(List<Plataforma> plataformas, int tipo) {
-        List<Plataforma> tramos = filtrar(plataformas, tipo);
+    private static List<Hueco> buscarHuecos(List<Plataforma> plataformas,
+                                            Plataforma.Tipo tipo) {
+        List<Plataforma> tramos = plataformas.stream()
+                .filter(plataforma -> plataforma.tipo() == tipo)
+                .sorted(Comparator.comparingInt(Plataforma::x))
+                .toList();
+
         List<Hueco> huecos = new ArrayList<>();
         for (int i = 0; i < tramos.size() - 1; i++) {
-            int inicio = tramos.get(i).getX() + tramos.get(i).getAncho();
-            int ancho = tramos.get(i + 1).getX() - inicio;
+            Plataforma actual = tramos.get(i);
+            Plataforma siguiente = tramos.get(i + 1);
+            int inicio = actual.x() + actual.ancho();
+            int ancho = siguiente.x() - inicio;
             if (ancho > 0) {
                 huecos.add(new Hueco(inicio, ancho));
             }
         }
         return huecos;
-    }
-
-    /**
-     * Filtra y ordena las plataformas de un tipo.
-     *
-     * @param plataformas plataformas de la partida
-     * @param tipo tipo que se quiere conservar
-     * @return lista ordenada por coordenada horizontal
-     */
-    private static List<Plataforma> filtrar(List<Plataforma> plataformas, int tipo) {
-        List<Plataforma> lista = new ArrayList<>();
-        for (Plataforma plataforma : plataformas) {
-            if (plataforma.getTipo() == tipo) {
-                lista.add(plataforma);
-            }
-        }
-        lista.sort(Comparator.comparingInt(Plataforma::getX));
-        return lista;
     }
 
     /**
@@ -151,7 +141,7 @@ public final class DibujoPlataformas {
         Shape recorte = g.getClip();
         try {
             g.clipRect(inicio + 6, EstadoJuego.PISO + 11, ancho - 12, alto - 21);
-            g.setStroke(new BasicStroke(3f));
+            g.setStroke(TRAZO_GRUESO);
             for (int k = 0; k < RAYOS_POR_HUECO; k++) {
                 int y = EstadoJuego.PISO + 14 + ((tick * 2 + k * 13) % 28);
                 g.setColor(k % 2 == 0 ? EstiloBrutal.ROJO : EstiloBrutal.AMARILLO);
@@ -183,7 +173,7 @@ public final class DibujoPlataformas {
         Shape recorte = g.getClip();
         try {
             g.clipRect(inicio + 5, arriba + 2, ancho - 10, ALTO_HUECO_TECHO - 4);
-            g.setStroke(new BasicStroke(2.5f));
+            g.setStroke(TRAZO_MEDIO);
             for (int k = 0; k < RAYOS_POR_HUECO; k++) {
                 int y = arriba + 3 + ((tick * 2 + k * 7) % 17);
                 g.setColor(k % 2 == 0 ? EstiloBrutal.ROJO : EstiloBrutal.AMARILLO);
@@ -265,7 +255,7 @@ public final class DibujoPlataformas {
         g.setColor(EstiloBrutal.AMARILLO);
         g.fillRect(x, y, ANCHO_SENAL, ALTO_SENAL);
         g.setColor(EstiloBrutal.NEGRO);
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_FINO);
         g.drawRect(x, y, ANCHO_SENAL, ALTO_SENAL);
 
         boolean pulso = (tick / 14) % 2 == 0;
@@ -303,16 +293,16 @@ public final class DibujoPlataformas {
      * @param plataforma tramo de piso
      */
     private static void dibujarSuelo(Graphics2D g, Plataforma plataforma) {
-        int x = plataforma.getX();
-        int y = plataforma.getY();
-        int ancho = plataforma.getAncho();
+        int x = plataforma.x();
+        int y = plataforma.y();
+        int ancho = plataforma.ancho();
         int alto = EstadoJuego.ALTO - y;
 
         g.setColor(CUERPO_SUELO);
         g.fillRect(x, y, ancho, alto);
 
         g.setColor(JUNTA);
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_FINO);
         for (int linea = x + 26; linea < x + ancho; linea += 30) {
             g.drawLine(linea, y + 10, linea, EstadoJuego.ALTO);
         }
@@ -342,10 +332,10 @@ public final class DibujoPlataformas {
      * @param plataforma tramo de techo
      */
     private static void dibujarTecho(Graphics2D g, Plataforma plataforma) {
-        int x = plataforma.getX();
-        int y = plataforma.getY();
-        int ancho = plataforma.getAncho();
-        int alto = plataforma.getAlto();
+        int x = plataforma.x();
+        int y = plataforma.y();
+        int ancho = plataforma.ancho();
+        int alto = plataforma.alto();
 
         g.setColor(EstiloBrutal.NEGRO);
         g.fillRect(x + 5, y + 5, ancho, alto);
@@ -375,10 +365,10 @@ public final class DibujoPlataformas {
      * @param plataforma plataforma flotante
      */
     private static void dibujarFlotante(Graphics2D g, Plataforma plataforma) {
-        int x = plataforma.getX();
-        int y = plataforma.getY();
-        int ancho = plataforma.getAncho();
-        int alto = plataforma.getAlto();
+        int x = plataforma.x();
+        int y = plataforma.y();
+        int ancho = plataforma.ancho();
+        int alto = plataforma.alto();
 
         g.setColor(EstiloBrutal.NEGRO);
         g.fillRect(x + 7, y + 7, ancho, alto);
@@ -389,7 +379,7 @@ public final class DibujoPlataformas {
         try {
             g.clipRect(x + 4, y + 4, ancho - 8, alto - 8);
             g.setColor(HUELLA);
-            g.setStroke(new BasicStroke(2f));
+            g.setStroke(TRAZO_FINO);
             for (int linea = x - alto; linea < x + ancho; linea += 18) {
                 g.drawLine(linea, y + alto, linea + alto, y);
             }

@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.dibujo;
 
-import com.gemelosgravedad.modelo.Jugador;
+import com.gemelosgravedad.modelo.entidades.Jugador;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,6 +30,15 @@ public final class DibujoCuerda {
     private static final double VELOCIDAD_VIBRACION = 0.55;
     private static final double POSICION_ABRAZADERA_IZQUIERDA = 0.11;
     private static final double POSICION_ABRAZADERA_DERECHA = 0.89;
+    private static final BasicStroke TRAZO_SOGA = new BasicStroke(8f,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private static final BasicStroke TRAZO_GUIA = new BasicStroke(2.5f,
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f,
+            new float[]{7f, 7f}, 0f);
+    private static final BasicStroke TRAZO_TENSA_FONDO = new BasicStroke(15f,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private static final BasicStroke TRAZO_TENSA_ROJO = new BasicStroke(5f,
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
     private DibujoCuerda() {
     }
@@ -73,12 +82,11 @@ public final class DibujoCuerda {
                 medioX + perpX * lado, medioY + perpY * lado, x2, y2);
 
         g.setColor(CUERDA);
-        g.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setStroke(TRAZO_SOGA);
         g.draw(curva);
 
         g.setColor(EstiloBrutal.AMARILLO);
-        g.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                1f, new float[]{7f, 7f}, 0f));
+        g.setStroke(TRAZO_GUIA);
         g.draw(curva);
 
         dibujarAbrazadera(g, punto(curva, POSICION_ABRAZADERA_IZQUIERDA));
@@ -113,15 +121,15 @@ public final class DibujoCuerda {
         double by = y2 + perpY * vibracion;
 
         g.setColor(TENSA);
-        g.setStroke(new BasicStroke(15f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setStroke(TRAZO_TENSA_FONDO);
         g.drawLine((int) ax, (int) ay, (int) bx, (int) by);
 
         g.setColor(CUERDA);
-        g.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setStroke(TRAZO_SOGA);
         g.drawLine((int) ax, (int) ay, (int) bx, (int) by);
 
         g.setColor(EstiloBrutal.ROJO);
-        g.setStroke(new BasicStroke(5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        g.setStroke(TRAZO_TENSA_ROJO);
         g.drawLine((int) ax, (int) ay, (int) bx, (int) by);
 
         g.setColor(EstiloBrutal.AMARILLO);

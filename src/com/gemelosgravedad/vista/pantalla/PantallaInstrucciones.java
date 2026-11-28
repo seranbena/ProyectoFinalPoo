@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.pantalla;
 
-import com.gemelosgravedad.modelo.TipoPowerUp;
+import com.gemelosgravedad.modelo.datos.TipoPowerUp;
 import com.gemelosgravedad.vista.componente.BarraBrutal;
 import com.gemelosgravedad.vista.componente.BotonEstilo;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
@@ -82,24 +82,30 @@ public final class PantallaInstrucciones extends PantallaBase {
         izquierda.setBorder(BorderFactory.createEmptyBorder(16, 22, 16, 22));
 
         seccion(izquierda, "01 // CONTROLES", EstiloBrutal.AMARILLO);
-        linea(izquierda, "← / →    MOVER A AMBOS GEMELOS", EstiloBrutal.NEGRO, false);
-        linea(izquierda, "ESPACIO   SALTO EN ESPEJO / RESCATE", EstiloBrutal.NEGRO, false);
+        linea(izquierda, "1 JUGADOR: ←/→ O A/D + ESPACIO.", EstiloBrutal.NEGRO, false);
+        linea(izquierda, "2 JUGADORES: P1 A/D + W // P2 ←/→ + ↑.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "P   PAUSA        ESC   MENÚ", EstiloBrutal.NEGRO, false);
 
-        seccion(izquierda, "02 // OBJETIVO", EstiloBrutal.AMARILLO);
+        seccion(izquierda, "02 // MANDO XBOX/PLAY", EstiloBrutal.AMARILLO);
+        linea(izquierda, "CONFIGURA STEAM O DS4WINDOWS PARA ENVIAR TECLAS.",
+                EstiloBrutal.NEGRO, false);
+        linea(izquierda, "DOS MANDOS: UN PERFIL POR CONTROL.", EstiloBrutal.NEGRO, false);
+
+        seccion(izquierda, "03 // OBJETIVO", EstiloBrutal.AMARILLO);
         linea(izquierda, "EL TIEMPO SUMA 2 PUNTOS POR SEGUNDO.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "CADA 10 SEGUNDOS SUBE LA DIFICULTAD.", EstiloBrutal.NEGRO, false);
 
-        seccion(izquierda, "03 // CRISTALES", EstiloBrutal.AMARILLO);
+        seccion(izquierda, "04 // CRISTALES", EstiloBrutal.AMARILLO);
         linea(izquierda, "CADA CRISTAL VALE 25 PUNTOS.", EstiloBrutal.NEGRO, false);
         linea(izquierda, "APARECEN EN EL PISO O EN EL TECHO.", EstiloBrutal.NEGRO, false);
 
-        seccion(izquierda, "04 // HUECOS, PLATAFORMAS Y SOGA",
+        seccion(izquierda, "05 // HUECOS, PLATAFORMAS Y SOGA",
                 EstiloBrutal.AMARILLO);
         linea(izquierda, "PISO Y TECHO ROTOS: SALTA ENTRE PLATAFORMAS.",
                 EstiloBrutal.NEGRO, false);
         linea(izquierda, "SI CAE UNO, LA SOGA LO DEJA COLGANDO.", EstiloBrutal.ROJO, true);
-        linea(izquierda, "ESPACIO LO RESCATA. SOLO CAES SI CAEN LOS DOS.",
+        linea(izquierda, "EN 1P: ESPACIO RESCATA AL COLGADO.", EstiloBrutal.ROJO, true);
+        linea(izquierda, "EN 2P: EL COMPAÑERO SALTA PARA RESCATAR.",
                 EstiloBrutal.ROJO, true);
         izquierda.add(Box.createVerticalGlue());
         columnas.add(izquierda);
@@ -109,13 +115,13 @@ public final class PantallaInstrucciones extends PantallaBase {
         derecha.setLayout(new BoxLayout(derecha, BoxLayout.Y_AXIS));
         derecha.setBorder(BorderFactory.createEmptyBorder(16, 22, 16, 22));
 
-        seccion(derecha, "05 // ENEMIGOS", EstiloBrutal.AMARILLO);
+        seccion(derecha, "06 // ENEMIGOS", EstiloBrutal.AMARILLO);
         filaEnemigo(derecha, EstiloBrutal.ROJO, "CAMINANTE", "AVANZA POR EL PISO.");
         filaEnemigo(derecha, EstiloBrutal.MORADO, "MURCIÉLAGO", "AVANZA POR EL TECHO.");
         filaEnemigo(derecha, EstiloBrutal.VERDE, "DRON", "VUELA POR EL CENTRO.");
         linea(derecha, "SI TE TOCAN, PIERDES UNA VIDA.", EstiloBrutal.ROJO, true);
 
-        seccion(derecha, "06 // POWER-UPS", EstiloBrutal.AMARILLO);
+        seccion(derecha, "07 // POWER-UPS", EstiloBrutal.AMARILLO);
         filaEnemigo(derecha, TipoPowerUp.ESCUDO.getColor(), "ESCUDO [E]",
                 TipoPowerUp.ESCUDO.getDuracionSegundos() + " S. RESISTE UN GOLPE.");
         filaEnemigo(derecha, TipoPowerUp.TURBO.getColor(), "TURBO [T]",
@@ -124,7 +130,7 @@ public final class PantallaInstrucciones extends PantallaBase {
         linea(derecha, "EL TURBO TAMBIÉN TE HACE MÁS GRANDE.",
                 EstiloBrutal.NEGRO, false);
 
-        seccion(derecha, "07 // VIDAS Y EXTRA", EstiloBrutal.AMARILLO);
+        seccion(derecha, "08 // VIDAS Y EXTRA", EstiloBrutal.AMARILLO);
         linea(derecha, "EMPIEZAS CON 3 VIDAS.", EstiloBrutal.NEGRO, false);
         linea(derecha, "TRAS UN GOLPE: 2 S INVULNERABLE.", EstiloBrutal.NEGRO, false);
         linea(derecha, "ENEMIGO DESTRUIDO CON TURBO: +50.", EstiloBrutal.NEGRO, false);

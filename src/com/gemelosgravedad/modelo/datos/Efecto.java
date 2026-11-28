@@ -1,5 +1,6 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.datos;
 
+import com.gemelosgravedad.modelo.juego.GestorColisiones;
 import com.gemelosgravedad.recursos.GestorSonidos;
 
 /**

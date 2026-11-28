@@ -1,6 +1,6 @@
 package com.gemelosgravedad.vista.pantalla;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
 import com.gemelosgravedad.vista.componente.BarraBrutal;
 import com.gemelosgravedad.vista.componente.PanelFondo;
 import java.awt.BorderLayout;

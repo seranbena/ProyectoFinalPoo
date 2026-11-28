@@ -1,5 +1,7 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
+import com.gemelosgravedad.modelo.datos.Plataforma;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
 import com.gemelosgravedad.recursos.GestorRecursos;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,7 +20,7 @@ import java.util.List;
  * @see Entidad
  * @see EstadoJuego
  */
-public class Jugador extends Entidad {
+public final class Jugador extends Entidad {
 
     /** Ancho del gemelo en estado normal. */
     public static final int ANCHO_NORMAL = 54;
@@ -49,6 +51,16 @@ public class Jugador extends Entidad {
     private static final Color NARANJA_RESPALDO = new Color(255, 150, 40);
     private static final Color SOMBRA = new Color(0, 0, 0, 140);
 
+    private static final BasicStroke TRAZO_ESCUDO = new BasicStroke(3f);
+    private static final BasicStroke TRAZO_DESTELLO = new BasicStroke(3f);
+    private static final BasicStroke TRAZO_COLGANDO = new BasicStroke(3f,
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f,
+            new float[]{6f, 4f}, 0f);
+    private static final BasicStroke TRAZO_AURA = new BasicStroke(4f);
+    private static final BasicStroke TRAZO_AURA_BORDE = new BasicStroke(2f);
+    private static final BasicStroke TRAZO_MARCO = new BasicStroke(7f);
+    private static final BasicStroke TRAZO_MARCO_DESTELLO = new BasicStroke(8f);
+
     private final Color color;
     private final Image[] spritesTurbo;
     private final Image[] spritesEscudo;
@@ -78,10 +90,8 @@ public class Jugador extends Entidad {
         this.sentidoGravedad = sentidoGravedad;
         this.color = color;
         this.enSuelo = true;
-        this.colgando = false;
         this.ultimoX = x;
         this.ultimoY = y;
-        this.destello = 0;
         this.sprites = GestorRecursos.cargarCuadros(carpeta, 3);
         this.spritesTurbo = GestorRecursos.tintarCuadros(sprites,
                 new Color(255, 140, 20), 0.58f);
@@ -159,20 +169,14 @@ public class Jugador extends Entidad {
      * @return borde superior de apoyo o {@link Integer#MAX_VALUE} si no hay
      */
     private int buscarApoyoSuperior(List<Plataforma> plataformas, int anteriorY, int nuevoY) {
-        int borde = Integer.MAX_VALUE;
-        for (Plataforma plataforma : plataformas) {
-            if (!plataforma.apoyaA(1)
-                    || !plataforma.cubreHorizontalmente(getX(), getAncho())) {
-                continue;
-            }
-            int superior = plataforma.getY();
-            if (anteriorY + getAlto() <= superior + MARGEN_APOYO
-                    && nuevoY + getAlto() >= superior
-                    && superior < borde) {
-                borde = superior;
-            }
-        }
-        return borde;
+        return plataformas.stream()
+                .filter(plataforma -> plataforma.apoyaA(1)
+                        && plataforma.cubreHorizontalmente(getX(), getAncho()))
+                .filter(plataforma -> anteriorY + getAlto() <= plataforma.y() + MARGEN_APOYO
+                        && nuevoY + getAlto() >= plataforma.y())
+                .mapToInt(Plataforma::y)
+                .min()
+                .orElse(Integer.MAX_VALUE);
     }
 
     /**
@@ -185,20 +189,14 @@ public class Jugador extends Entidad {
      * @return borde inferior de apoyo o {@link Integer#MIN_VALUE} si no hay
      */
     private int buscarApoyoInferior(List<Plataforma> plataformas, int anteriorY, int nuevoY) {
-        int borde = Integer.MIN_VALUE;
-        for (Plataforma plataforma : plataformas) {
-            if (!plataforma.apoyaA(-1)
-                    || !plataforma.cubreHorizontalmente(getX(), getAncho())) {
-                continue;
-            }
-            int inferior = plataforma.getBordeInferior();
-            if (anteriorY >= inferior - MARGEN_APOYO
-                    && nuevoY <= inferior
-                    && inferior > borde) {
-                borde = inferior;
-            }
-        }
-        return borde;
+        return plataformas.stream()
+                .filter(plataforma -> plataforma.apoyaA(-1)
+                        && plataforma.cubreHorizontalmente(getX(), getAncho()))
+                .filter(plataforma -> anteriorY >= plataforma.bordeInferior() - MARGEN_APOYO
+                        && nuevoY <= plataforma.bordeInferior())
+                .mapToInt(Plataforma::bordeInferior)
+                .max()
+                .orElse(Integer.MIN_VALUE);
     }
 
     /**
@@ -301,10 +299,17 @@ public class Jugador extends Entidad {
      * Devuelve el gemelo al ultimo punto seguro tras caer al vacio.
      */
     public void reaparecer() {
-        setX(ultimoX);
-        setY(ultimoY);
+        volverAlPuntoSeguro();
         velocidadY = 0;
         enSuelo = true;
+    }
+
+    /**
+     * Devuelve al gemelo a su ultimo punto seguro y suelta la soga.
+     */
+    private void volverAlPuntoSeguro() {
+        setX(ultimoX);
+        setY(ultimoY);
         colgando = false;
     }
 
@@ -325,9 +330,7 @@ public class Jugador extends Entidad {
      * impulso.
      */
     public void rescatar() {
-        colgando = false;
-        setX(ultimoX);
-        setY(ultimoY);
+        volverAlPuntoSeguro();
         velocidadY = -IMPULSO * IMPULSO_RESCATE * sentidoGravedad;
         enSuelo = false;
         destello = DESTELLO_RESCATE;
@@ -379,15 +382,13 @@ public class Jugador extends Entidad {
         }
 
         if (escudo) {
-            dibujarMarco(g, 6, 7f, CIAN_ESCUDO_CLARO, new BasicStroke(3f));
+            dibujarMarco(g, 6, TRAZO_MARCO, CIAN_ESCUDO_CLARO, TRAZO_ESCUDO);
         }
         if (destello > 0) {
-            dibujarMarco(g, 5, 8f, AMARILLO, new BasicStroke(3f));
+            dibujarMarco(g, 5, TRAZO_MARCO_DESTELLO, AMARILLO, TRAZO_DESTELLO);
         }
         if (colgando) {
-            BasicStroke discontinuo = new BasicStroke(3f, BasicStroke.CAP_BUTT,
-                    BasicStroke.JOIN_MITER, 1f, new float[]{6f, 4f}, 0f);
-            dibujarMarco(g, 5, 7f, AMARILLO, discontinuo);
+            dibujarMarco(g, 5, TRAZO_MARCO, AMARILLO, TRAZO_COLGANDO);
         }
     }
 
@@ -400,7 +401,7 @@ public class Jugador extends Entidad {
      * @param colorInterno color del borde interior
      * @param trazoInterno trazo del borde interior
      */
-    private void dibujarMarco(Graphics2D g, int margen, float grosorExterno,
+    private void dibujarMarco(Graphics2D g, int margen, BasicStroke trazoExterno,
                               Color colorInterno, BasicStroke trazoInterno) {
         int x = getX() - margen;
         int y = getY() - margen;
@@ -408,7 +409,7 @@ public class Jugador extends Entidad {
         int alto = getAlto() + margen * 2;
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setColor(NEGRO);
-        g2.setStroke(new BasicStroke(grosorExterno));
+        g2.setStroke(trazoExterno);
         g2.drawRect(x, y, ancho, alto);
         g2.setColor(colorInterno);
         g2.setStroke(trazoInterno);
@@ -425,10 +426,10 @@ public class Jugador extends Entidad {
     private void dibujarAura(Graphics2D g, Color colorAura) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setColor(colorAura);
-        g2.setStroke(new BasicStroke(4f));
+        g2.setStroke(TRAZO_AURA);
         g2.drawRect(getX() - 8, getY() - 8, getAncho() + 16, getAlto() + 16);
         g2.setColor(NEGRO);
-        g2.setStroke(new BasicStroke(2f));
+        g2.setStroke(TRAZO_AURA_BORDE);
         g2.drawRect(getX() - 12, getY() - 12, getAncho() + 24, getAlto() + 24);
         g2.dispose();
     }

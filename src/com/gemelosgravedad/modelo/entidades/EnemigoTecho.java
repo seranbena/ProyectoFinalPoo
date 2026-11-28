@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
  *
  * @see Enemigo
  */
-public class EnemigoTecho extends Enemigo {
+public final class EnemigoTecho extends Enemigo {
 
     private static final Color NEGRO = new Color(18, 18, 18);
     private static final Color MORADO = new Color(132, 74, 220);

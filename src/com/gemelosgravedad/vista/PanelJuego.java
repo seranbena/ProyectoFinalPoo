@@ -1,8 +1,8 @@
 package com.gemelosgravedad.vista;
 
-import com.gemelosgravedad.modelo.Entidad;
-import com.gemelosgravedad.modelo.EstadoJuego;
-import com.gemelosgravedad.modelo.Jugador;
+import com.gemelosgravedad.modelo.entidades.Entidad;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
+import com.gemelosgravedad.modelo.entidades.Jugador;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
 import com.gemelosgravedad.vista.dibujo.DibujoCuerda;
 import com.gemelosgravedad.vista.dibujo.DibujoFondo;
@@ -43,6 +43,8 @@ public final class PanelJuego extends JPanel {
     private static final int ALTO_PIE = 17;
     private static final int ANCHO_PAUSA = 560;
     private static final int ALTO_PAUSA = 310;
+    private static final BasicStroke TRAZO_BORDE = new BasicStroke(2f);
+    private static final BasicStroke TRAZO_PAUSA = new BasicStroke(8f);
 
     private transient EstadoJuego estado;
 
@@ -134,7 +136,6 @@ public final class PanelJuego extends JPanel {
             for (Entidad entidad : copia) {
                 entidad.dibujar(g2);
             }
-
             dibujarJugadores(g2);
             dibujarRescate(g2, tick);
             DibujoHud.dibujar(g2, estado);
@@ -180,9 +181,21 @@ public final class PanelJuego extends JPanel {
                 EstiloBrutal.NEGRO, 2);
 
         boolean rescate = estado.getJugadorColgado() != null;
-        String derecha = rescate
-                ? "¡SOGA TENSA!  ESPACIO = SALTO CONJUNTO"
-                : "SALTA ENTRE PLATAFORMAS · EVITA EL VACÍO";
+        String derecha;
+        if (rescate) {
+            Jugador colgado = estado.getJugadorColgado();
+            if (estado.isDosJugadores()) {
+                String tecla = colgado == estado.getJugadorAzul()
+                        ? "P2: ↑" : "P1: W";
+                derecha = "¡SOGA TENSA!  " + tecla + " = RESCATE";
+            } else {
+                derecha = "¡SOGA TENSA!  ESPACIO = SALTO CONJUNTO";
+            }
+        } else if (estado.isDosJugadores()) {
+            derecha = "P1: A/D + W   //   P2: ←/→ + ↑";
+        } else {
+            derecha = "SALTA ENTRE PLATAFORMAS · EVITA EL VACÍO";
+        }
         Color color = rescate
                 ? ((tick / 12) % 2 == 0 ? EstiloBrutal.ROJO : EstiloBrutal.AMARILLO)
                 : EstiloBrutal.GRIS_CLARO;
@@ -205,7 +218,13 @@ public final class PanelJuego extends JPanel {
         }
         boolean colgadoAbajo = colgado.getSentidoGravedad() == 1;
         int cx = colgado.getX() + colgado.getAncho() / 2;
-        String texto = "SALTO CONJUNTO: ESPACIO";
+        String texto;
+        if (estado.isDosJugadores()) {
+            texto = colgado == estado.getJugadorAzul()
+                    ? "P2: ↑  RESCATA" : "P1: W  RESCATA";
+        } else {
+            texto = "SALTO CONJUNTO: ESPACIO";
+        }
         g.setFont(EstiloBrutal.mono(10));
         int ancho = g.getFontMetrics().stringWidth(texto) + 18;
         int x = Math.max(14, Math.min(cx - ancho / 2,
@@ -221,7 +240,7 @@ public final class PanelJuego extends JPanel {
                 ? EstiloBrutal.AMARILLO : EstiloBrutal.ROJO);
         g.fillRect(x, y, ancho, 22);
         g.setColor(EstiloBrutal.NEGRO);
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_BORDE);
         g.drawRect(x, y, ancho, 22);
         g.drawString(texto, x + 9, y + 15);
 
@@ -233,7 +252,7 @@ public final class PanelJuego extends JPanel {
         g.setColor(EstiloBrutal.ROJO);
         g.fillPolygon(flecha);
         g.setColor(EstiloBrutal.NEGRO);
-        g.setStroke(new BasicStroke(2f));
+        g.setStroke(TRAZO_BORDE);
         g.drawPolygon(flecha);
     }
 
@@ -257,7 +276,7 @@ public final class PanelJuego extends JPanel {
         g.fillRect(x, y, ANCHO_PAUSA, ALTO_PAUSA);
 
         g.setColor(EstiloBrutal.NEGRO);
-        g.setStroke(new BasicStroke(8f));
+        g.setStroke(TRAZO_PAUSA);
         g.drawRect(x + 4, y + 4, ANCHO_PAUSA - 8, ALTO_PAUSA - 8);
 
         g.setColor(EstiloBrutal.ROJO);
@@ -290,9 +309,16 @@ public final class PanelJuego extends JPanel {
         g.setColor(EstiloBrutal.NEGRO);
         g.drawString("ESC  //  VOLVER AL MENÚ", x + 46, y + 216);
 
+        g.setFont(EstiloBrutal.mono(12));
+        g.setColor(EstiloBrutal.NEGRO);
+        String controles = estado.isDosJugadores()
+                ? "P1: A/D/W   //   P2: ←/→/↑"
+                : "←/→ MOVER   //   ESPACIO SALTAR";
+        g.drawString(controles, x + 46, y + 250);
+
         g.setFont(EstiloBrutal.monoNormal(11));
         g.setColor(EstiloBrutal.GRIS);
-        g.drawString("LA PARTIDA ESTÁ CONGELADA.", x + 46, y + 256);
+        g.drawString("LA PARTIDA ESTÁ CONGELADA.", x + 46, y + 276);
 
         EstiloBrutal.franjas(g, x, y + ALTO_PAUSA - 10, ANCHO_PAUSA, 10,
                 EstiloBrutal.AZUL);

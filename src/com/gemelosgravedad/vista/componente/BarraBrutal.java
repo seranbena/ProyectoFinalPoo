@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -35,7 +36,7 @@ public final class BarraBrutal {
      * @return etiqueta configurada
      */
     private static JLabel etiqueta(String texto, Font fuente, Color color) {
-        JLabel etiqueta = new JLabel(texto == null ? "" : texto.toUpperCase());
+        JLabel etiqueta = new JLabel(texto == null ? "" : texto.toUpperCase(Locale.ROOT));
         etiqueta.setFont(fuente);
         etiqueta.setForeground(color);
         return etiqueta;
@@ -108,7 +109,7 @@ public final class BarraBrutal {
      * @return etiqueta configurada como chip
      */
     public static JLabel chip(String texto, Color fondo, Color frente) {
-        JLabel chip = new JLabel(texto == null ? "" : texto.toUpperCase());
+        JLabel chip = new JLabel(texto == null ? "" : texto.toUpperCase(Locale.ROOT));
         chip.setOpaque(true);
         chip.setBackground(fondo);
         chip.setForeground(frente);

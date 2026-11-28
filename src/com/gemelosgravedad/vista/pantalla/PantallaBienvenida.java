@@ -75,7 +75,7 @@ public final class PantallaBienvenida extends PantallaBase {
         botonSalir = new BotonEstilo("SALIR", EstiloBrutal.ROJO,
                 ANCHO_BOTON, ALTO_BOTON);
         montar("", "BIENVENIDO", MATERIA, crearCentro(), INTEGRANTES,
-                "← → MOVER // ESPACIO SALTAR // ESC MENÚ");
+                "1 O 2 JUGADORES // TECLADO O MANDO");
     }
 
     /**
@@ -109,7 +109,7 @@ public final class PantallaBienvenida extends PantallaBase {
      * @return cartel de bienvenida
      */
     private JPanel crearPoster() {
-        JPanel poster = getJPanel();
+        JPanel poster = crearMarcoPoster();
 
         JPanel filaSellos = new JPanel(new BorderLayout());
         filaSellos.setOpaque(false);
@@ -159,7 +159,12 @@ public final class PantallaBienvenida extends PantallaBase {
         return poster;
     }
 
-    private JPanel getJPanel() {
+    /**
+     * Crea el panel base del cartel con su marco amarillo y negro.
+     *
+     * @return panel del cartel sin contenido
+     */
+    private JPanel crearMarcoPoster() {
         JPanel poster = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -201,12 +206,12 @@ public final class PantallaBienvenida extends PantallaBase {
     private JComponent crearLogo() {
         Image imagen = GestorRecursos.cargarImagen(RUTA_LOGO);
         if (imagen == null) {
-            return BarraBrutal.chip("UAM", EstiloBrutal.PAPEL, EstiloBrutal.NEGRO);
+            return chipUam();
         }
         int anchoOriginal = imagen.getWidth(null);
         int altoOriginal = imagen.getHeight(null);
         if (anchoOriginal <= 0 || altoOriginal <= 0) {
-            return BarraBrutal.chip("UAM", EstiloBrutal.PAPEL, EstiloBrutal.NEGRO);
+            return chipUam();
         }
         int ancho = Math.max(1, anchoOriginal * ALTO_LOGO / altoOriginal);
         int alto = ALTO_LOGO;
@@ -224,6 +229,15 @@ public final class PantallaBienvenida extends PantallaBase {
                 BorderFactory.createEmptyBorder(2, 6, 2, 6)));
         logo.setToolTipText("Universidad Autónoma de Manizales");
         return logo;
+    }
+
+    /**
+     * Crea el chip de respaldo cuando el logo no esta disponible.
+     *
+     * @return etiqueta con las siglas de la universidad
+     */
+    private JComponent chipUam() {
+        return BarraBrutal.chip("UAM", EstiloBrutal.PAPEL, EstiloBrutal.NEGRO);
     }
 
     /**

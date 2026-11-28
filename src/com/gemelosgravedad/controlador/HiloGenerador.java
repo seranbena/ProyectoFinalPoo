@@ -1,14 +1,14 @@
 package com.gemelosgravedad.controlador;
 
-import com.gemelosgravedad.modelo.Cristal;
-import com.gemelosgravedad.modelo.EnemigoCaminante;
-import com.gemelosgravedad.modelo.EnemigoTecho;
-import com.gemelosgravedad.modelo.EnemigoVolador;
-import com.gemelosgravedad.modelo.EstadoJuego;
-import com.gemelosgravedad.modelo.OrbeCambio;
-import com.gemelosgravedad.modelo.PowerUp;
-import com.gemelosgravedad.modelo.TipoPowerUp;
-import java.util.Random;
+import com.gemelosgravedad.modelo.entidades.Cristal;
+import com.gemelosgravedad.modelo.entidades.EnemigoCaminante;
+import com.gemelosgravedad.modelo.entidades.EnemigoTecho;
+import com.gemelosgravedad.modelo.entidades.EnemigoVolador;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
+import com.gemelosgravedad.modelo.entidades.OrbeCambio;
+import com.gemelosgravedad.modelo.entidades.PowerUp;
+import com.gemelosgravedad.modelo.datos.TipoPowerUp;
+import java.util.random.RandomGenerator;
 
 /**
  * Hilo productor que crea enemigos, cristales, orbes y power-ups.
@@ -46,7 +46,7 @@ public final class HiloGenerador implements Runnable {
     private static final double FACTOR_VELOCIDAD_ORBE = 0.55;
 
     private final EstadoJuego estado;
-    private final Random azar = new Random();
+    private final RandomGenerator azar = RandomGenerator.getDefault();
     private volatile boolean activo = true;
     private volatile boolean pausado;
 

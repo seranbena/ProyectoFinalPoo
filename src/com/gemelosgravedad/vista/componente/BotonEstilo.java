@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.Serial;
+import java.util.Locale;
 import javax.swing.JButton;
 
 /**
@@ -26,6 +27,7 @@ public final class BotonEstilo extends JButton {
     private static final int SALTO = 7;
     private static final int BARRA = 9;
     private static final int DESPLAZAMIENTO_PULSADO = 3;
+    private static final BasicStroke TRAZO_BORDE = new BasicStroke(BORDE);
 
     /** Color de fondo del boton en estado normal. */
     private final Color colorBase;
@@ -39,7 +41,7 @@ public final class BotonEstilo extends JButton {
      * @param alto alto en pixeles
      */
     public BotonEstilo(String texto, Color colorBase, int ancho, int alto) {
-        super(texto == null ? "" : texto.toUpperCase());
+        super(texto == null ? "" : texto.toUpperCase(Locale.ROOT));
         this.colorBase = colorBase;
         setFont(EstiloBrutal.titulo(17));
         setForeground(EstiloBrutal.textoSobre(colorBase));
@@ -100,7 +102,7 @@ public final class BotonEstilo extends JButton {
             g2.fillRect(desplazamiento, desplazamiento, ancho, alto);
 
             g2.setColor(invertido ? colorBase : EstiloBrutal.NEGRO);
-            g2.setStroke(new BasicStroke(BORDE));
+            g2.setStroke(TRAZO_BORDE);
             g2.drawRect(desplazamiento + BORDE / 2, desplazamiento + BORDE / 2,
                     ancho - BORDE, alto - BORDE);
 

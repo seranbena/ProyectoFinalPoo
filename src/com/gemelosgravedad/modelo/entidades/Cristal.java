@@ -1,5 +1,6 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
+import com.gemelosgravedad.modelo.juego.GestorColisiones;
 import com.gemelosgravedad.recursos.GestorRecursos;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,7 +15,7 @@ import java.awt.Graphics2D;
  * @see EntidadDesplazable
  * @see GestorColisiones
  */
-public class Cristal extends EntidadDesplazable {
+public final class Cristal extends EntidadDesplazable {
 
     /** Puntos que otorga cada cristal. */
     public static final int VALOR = 25;

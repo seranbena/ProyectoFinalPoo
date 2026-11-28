@@ -31,9 +31,12 @@ public class PanelFondo extends JPanel {
     private static final int MARCO = 8;
     private static final int MARCA_ESQUINA = 10;
     private static final int MARGEN_MARCA = 24;
+    private static final BasicStroke TRAZO_FINO = new BasicStroke(1f);
+    private static final BasicStroke TRAZO_MEDIO = new BasicStroke(2f);
+    private static final BasicStroke TRAZO_MARCO = new BasicStroke(MARCO);
 
     /** Imagen opcional de fondo; {@code null} si no se configuro o no existe. */
-    private final Image imagenFondo;
+    private final transient Image imagenFondo;
 
     /**
      * Crea un fondo que usa una imagen si esta disponible.
@@ -107,7 +110,7 @@ public class PanelFondo extends JPanel {
         g2.fillRect(0, 0, ancho, alto);
 
         g2.setColor(REJILLA);
-        g2.setStroke(new BasicStroke(1f));
+        g2.setStroke(TRAZO_FINO);
         for (int x = 0; x < ancho; x += PASO_REJILLA) {
             g2.drawLine(x, 0, x, alto);
         }
@@ -116,7 +119,7 @@ public class PanelFondo extends JPanel {
         }
 
         g2.setColor(REJILLA_FUERTE);
-        g2.setStroke(new BasicStroke(2f));
+        g2.setStroke(TRAZO_MEDIO);
         for (int x = 0; x < ancho; x += PASO_REJILLA_FUERTE) {
             g2.drawLine(x, 0, x, alto);
         }
@@ -143,7 +146,7 @@ public class PanelFondo extends JPanel {
         g2.fillRect(0, 0, BARRA_LATERAL, alto);
 
         g2.setColor(EstiloBrutal.NEGRO);
-        g2.setStroke(new BasicStroke(MARCO));
+        g2.setStroke(TRAZO_MARCO);
         g2.drawRect(MARCO / 2, MARCO / 2, ancho - MARCO, alto - MARCO);
 
         g2.fillRect(MARGEN_MARCA, MARGEN_MARCA, MARCA_ESQUINA, MARCA_ESQUINA);

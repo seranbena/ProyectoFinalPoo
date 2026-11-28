@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.datos;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,8 +20,9 @@ public final class RegistroPartida {
     public static final int TAMANO_TOP = 3;
 
     private static final Comparator<Puntaje> ORDEN_TOP = Comparator
-            .comparingInt(Puntaje::getPuntos).reversed()
-            .thenComparing(Comparator.comparingInt(Puntaje::getSegundos).reversed());
+            .comparingInt(Puntaje::puntos)
+            .thenComparingInt(Puntaje::segundos)
+            .reversed();
 
     private final List<Puntaje> partidas = new ArrayList<>();
 
@@ -42,8 +43,9 @@ public final class RegistroPartida {
      * @return hasta {@value #TAMANO_TOP} resultados, del mejor al peor
      */
     public List<Puntaje> obtenerTop3() {
-        List<Puntaje> copia = new ArrayList<>(partidas);
-        copia.sort(ORDEN_TOP);
-        return new ArrayList<>(copia.subList(0, Math.min(TAMANO_TOP, copia.size())));
+        return partidas.stream()
+                .sorted(ORDEN_TOP)
+                .limit(TAMANO_TOP)
+                .toList();
     }
 }

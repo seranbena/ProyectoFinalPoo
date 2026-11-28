@@ -7,7 +7,7 @@
  * modelo con Swing, {@code vista} dibuja la interfaz y {@code recursos} carga
  * imagenes y sonidos.</p>
  *
- * @see com.gemelosgravedad.modelo.EstadoJuego
+ * @see com.gemelosgravedad.modelo.juego.EstadoJuego
  * @see com.gemelosgravedad.controlador.ControladorJuego
  * @see com.gemelosgravedad.vista.VentanaPrincipal
  */

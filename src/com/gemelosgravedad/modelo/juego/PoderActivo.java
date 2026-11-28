@@ -1,4 +1,8 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.juego;
+
+import com.gemelosgravedad.modelo.datos.TipoPowerUp;
+import com.gemelosgravedad.modelo.entidades.Jugador;
+import com.gemelosgravedad.modelo.entidades.PowerUp;
 
 /**
  * Controla el power-up activo y su efecto sobre los dos gemelos.

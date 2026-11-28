@@ -1,5 +1,10 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.juego;
 
+import com.gemelosgravedad.modelo.datos.Efecto;
+import com.gemelosgravedad.modelo.datos.Plataforma;
+import com.gemelosgravedad.modelo.entidades.Enemigo;
+import com.gemelosgravedad.modelo.entidades.Entidad;
+import com.gemelosgravedad.modelo.entidades.Jugador;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +36,12 @@ public class EstadoJuego {
     /** Coordenada vertical donde comienza el piso. */
     public static final int PISO = 580;
 
+    /**
+     * Separacion horizontal maxima entre los centros de los gemelos antes de
+     * que la soga frene al que se aleja.
+     */
+    public static final int DISTANCIA_MAXIMA_SOGA = 420;
+
     private static final double VELOCIDAD_BASE_INICIAL = 4.0;
     private static final double INCREMENTO_VELOCIDAD_BASE = 0.6;
     private static final double INCREMENTO_VELOCIDAD_ENEMIGO = 0.35;
@@ -45,6 +56,7 @@ public class EstadoJuego {
     private static final int X_INICIAL_JUGADORES = 150;
 
     private final String nombreJugador;
+    private final boolean dosJugadores;
     private final Jugador jugadorAzul;
     private final Jugador jugadorAmarillo;
     private final List<Plataforma> plataformas;
@@ -61,17 +73,31 @@ public class EstadoJuego {
     private volatile double velocidadBase = VELOCIDAD_BASE_INICIAL;
 
     /**
-     * Crea una partida nueva para el jugador indicado.
+     * Crea una partida nueva para un solo jugador.
      *
      * @param nombreJugador nombre que se mostrara en el HUD y el historial
      */
     public EstadoJuego(String nombreJugador) {
+        this(nombreJugador, false);
+    }
+
+    /**
+     * Crea una partida nueva en el modo indicado.
+     *
+     * <p>En el modo de dos jugadores cada uno controla un gemelo, pero las
+     * vidas, el puntaje y los power-ups siguen siendo compartidos.</p>
+     *
+     * @param nombreJugador nombre individual o combinado del equipo
+     * @param dosJugadores {@code true} para el modo cooperativo
+     */
+    public EstadoJuego(String nombreJugador, boolean dosJugadores) {
         this.nombreJugador = nombreJugador;
+        this.dosJugadores = dosJugadores;
         this.jugadorAzul = new Jugador(X_INICIAL_JUGADORES, PISO - Jugador.ALTO_NORMAL, 1,
                 new Color(64, 170, 255), "sprites/jugador_azul");
         this.jugadorAmarillo = new Jugador(X_INICIAL_JUGADORES, TECHO, -1,
                 new Color(255, 210, 60), "sprites/jugador_amarillo");
-        this.plataformas = Nivel.crearPlataformas();
+        this.plataformas = List.copyOf(Nivel.crearPlataformas());
         this.colisiones = new GestorColisiones(jugadorAzul, jugadorAmarillo,
                 entidades, efectos, marcador, poder);
     }
@@ -94,14 +120,11 @@ public class EstadoJuego {
         jugadorAmarillo.actualizar(plataformas);
         revisarCaidas();
 
-        for (int i = entidades.size() - 1; i >= 0; i--) {
-            Entidad entidad = entidades.get(i);
+        for (Entidad entidad : entidades) {
             entidad.actualizar();
-            if (!entidad.isActiva()
-                    || entidad.getX() + entidad.getAncho() < -MARGEN_SALIDA_ENTIDAD) {
-                entidades.remove(i);
-            }
         }
+        entidades.removeIf(entidad -> !entidad.isActiva()
+                || entidad.getX() + entidad.getAncho() < -MARGEN_SALIDA_ENTIDAD);
         colisiones.revisar();
     }
 
@@ -109,12 +132,10 @@ public class EstadoJuego {
      * Traslada las entidades generadas por el otro hilo a la lista principal.
      */
     private void recogerPendientes() {
-        List<Entidad> copia;
         synchronized (pendientes) {
-            copia = new ArrayList<>(pendientes);
+            entidades.addAll(pendientes);
             pendientes.clear();
         }
-        entidades.addAll(copia);
     }
 
     /**
@@ -183,15 +204,76 @@ public class EstadoJuego {
     /**
      * Mueve a los dos gemelos en la direccion indicada.
      *
+     * <p>Se conserva para el modo de un jugador, donde las dos mitades del
+     * equipo comparten el control.</p>
+     *
      * @param direccion {@code -1} a la izquierda, {@code 1} a la derecha
      */
     public synchronized void mover(int direccion) {
         if (direccion == 0 || marcador.isJuegoTerminado()) {
             return;
         }
-        int paso = getJugadorColgadoInterno() == null ? PASO_NORMAL : PASO_SOGA_TENSA;
+        int paso = pasoMovimiento();
         jugadorAzul.mover(direccion * paso, ANCHO);
         jugadorAmarillo.mover(direccion * paso, ANCHO);
+    }
+
+    /**
+     * Mueve solo al gemelo indicado y aplica el limite de la soga.
+     *
+     * <p>Es la entrada usada por el modo de dos jugadores: cada jugador mueve
+     * su propio gemelo sin arrastrar al companero. Si la soga queda tensa, el
+     * que se aleja se detiene para no separar al equipo.</p>
+     *
+     * @param jugador gemelo que recibe la orden
+     * @param direccion {@code -1} a la izquierda, {@code 1} a la derecha
+     */
+    public synchronized void mover(Jugador jugador, int direccion) {
+        if (jugador == null || direccion == 0 || marcador.isJuegoTerminado()) {
+            return;
+        }
+        int paso = pasoMovimiento();
+        Jugador companero = jugador == jugadorAzul ? jugadorAmarillo : jugadorAzul;
+        int distanciaAntes = distanciaHorizontal(jugador, companero);
+        jugador.mover(direccion * paso, ANCHO);
+        limitarSoga(jugador, companero, distanciaAntes, direccion);
+    }
+
+    /**
+     * Frena al gemelo que intenta aumentar la separacion mas alla de la soga.
+     *
+     * <p>Si la separacion ya supera el limite (por ejemplo, porque el otro
+     * gemelo quedo colgado), el movimiento que la reduce se permite. Solo se
+     * bloquea el movimiento que la aumenta.</p>
+     *
+     * @param jugador gemelo que acaba de moverse
+     * @param companero otro gemelo de la partida
+     * @param distanciaAntes separacion horizontal antes del movimiento
+     * @param direccion direccion solicitada
+     */
+    private void limitarSoga(Jugador jugador, Jugador companero,
+                             int distanciaAntes, int direccion) {
+        int distanciaDespues = distanciaHorizontal(jugador, companero);
+        if (distanciaDespues <= DISTANCIA_MAXIMA_SOGA
+                || distanciaDespues <= distanciaAntes) {
+            return;
+        }
+        int limite = Math.max(DISTANCIA_MAXIMA_SOGA, distanciaAntes);
+        int exceso = distanciaDespues - limite;
+        jugador.mover(direccion > 0 ? -exceso : exceso, ANCHO);
+    }
+
+    /**
+     * Calcula la separacion horizontal entre los centros de dos gemelos.
+     *
+     * @param uno primer gemelo
+     * @param otro segundo gemelo
+     * @return distancia en pixeles entre sus centros
+     */
+    private int distanciaHorizontal(Jugador uno, Jugador otro) {
+        int centroUno = uno.getX() + uno.getAncho() / 2;
+        int centroOtro = otro.getX() + otro.getAncho() / 2;
+        return Math.abs(centroUno - centroOtro);
     }
 
     /**
@@ -219,6 +301,31 @@ public class EstadoJuego {
     }
 
     /**
+     * Intenta saltar con un solo gemelo o rescatar al companero colgado.
+     *
+     * <p>Si el jugador indicado es el que esta colgado, no puede saltar: debe
+     * esperar a que su companero lo rescate.</p>
+     *
+     * @param jugador gemelo que recibe la orden de salto
+     * @return {@code true} si el salto o el rescate se realizaron
+     */
+    public synchronized boolean saltar(Jugador jugador) {
+        if (jugador == null || marcador.isJuegoTerminado() || jugador.isColgando()) {
+            return false;
+        }
+        Jugador colgado = getJugadorColgadoInterno();
+        if (colgado != null) {
+            if (jugador.isEnSuelo() && jugador.saltar()) {
+                colgado.rescatar();
+                jugador.destacar();
+                return true;
+            }
+            return false;
+        }
+        return jugador.saltar();
+    }
+
+    /**
      * Actualiza el cronometro, la invulnerabilidad, los power-ups y la
      * dificultad. Lo llama el temporizador de Swing cada segundo.
      */
@@ -241,7 +348,7 @@ public class EstadoJuego {
         velocidadBase += INCREMENTO_VELOCIDAD_BASE;
         for (Entidad entidad : entidades) {
             if (entidad instanceof Enemigo enemigo) {
-                enemigo.aumentarVelocidad(INCREMENTO_VELOCIDAD_ENEMIGO);
+                enemigo.acelerar(INCREMENTO_VELOCIDAD_ENEMIGO);
             }
         }
     }
@@ -262,12 +369,11 @@ public class EstadoJuego {
      * @return copia de los efectos acumulados
      */
     public List<Efecto> consumirEfectos() {
-        List<Efecto> copia;
         synchronized (efectos) {
-            copia = new ArrayList<>(efectos);
+            List<Efecto> copia = List.copyOf(efectos);
             efectos.clear();
+            return copia;
         }
-        return copia;
     }
 
     /**
@@ -281,12 +387,21 @@ public class EstadoJuego {
     }
 
     /**
-     * Devuelve el nombre del jugador.
+     * Devuelve el nombre del jugador o del equipo.
      *
      * @return nombre introducido al comenzar la partida
      */
     public String getNombreJugador() {
         return nombreJugador;
+    }
+
+    /**
+     * Indica si la partida es cooperativa para dos jugadores.
+     *
+     * @return {@code true} si cada jugador controla un gemelo
+     */
+    public boolean isDosJugadores() {
+        return dosJugadores;
     }
 
     /**
@@ -326,10 +441,16 @@ public class EstadoJuego {
         if (jugadorAzul.isColgando()) {
             return jugadorAzul;
         }
-        if (jugadorAmarillo.isColgando()) {
-            return jugadorAmarillo;
-        }
-        return null;
+        return jugadorAmarillo.isColgando() ? jugadorAmarillo : null;
+    }
+
+    /**
+     * Devuelve el paso horizontal segun el estado de la soga.
+     *
+     * @return paso normal o reducido cuando un gemelo esta colgado
+     */
+    private int pasoMovimiento() {
+        return getJugadorColgadoInterno() == null ? PASO_NORMAL : PASO_SOGA_TENSA;
     }
 
     /**

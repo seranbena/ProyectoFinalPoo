@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
 /**
  * Entidad desplazable que ademas oscila verticalmente con una onda senoidal.
@@ -10,7 +10,8 @@ package com.gemelosgravedad.modelo;
  * @see PowerUp
  * @see OrbeCambio
  */
-public abstract class ObjetoFlotante extends EntidadDesplazable {
+public abstract sealed class ObjetoFlotante extends EntidadDesplazable
+        permits PowerUp, OrbeCambio {
 
     private final double baseY;
     private final double amplitud;

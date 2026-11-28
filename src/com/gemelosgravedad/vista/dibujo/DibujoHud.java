@@ -1,9 +1,9 @@
 package com.gemelosgravedad.vista.dibujo;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
-import com.gemelosgravedad.modelo.Marcador;
-import com.gemelosgravedad.modelo.PoderActivo;
-import com.gemelosgravedad.modelo.TipoPowerUp;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
+import com.gemelosgravedad.modelo.juego.Marcador;
+import com.gemelosgravedad.modelo.juego.PoderActivo;
+import com.gemelosgravedad.modelo.datos.TipoPowerUp;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -25,6 +25,7 @@ public final class DibujoHud {
     private static final Color SEPARADOR = new Color(62, 62, 62);
     private static final Color PODER_INACTIVO = new Color(105, 105, 105);
     private static final Color VIDA_PERDIDA = new Color(80, 80, 80);
+    private static final BasicStroke TRAZO_VIDA = new BasicStroke(2f);
     private static final int X_VIDAS = 24;
     private static final int Y_VIDAS = 28;
     private static final int PASO_VIDAS = 26;
@@ -78,10 +79,12 @@ public final class DibujoHud {
 
         String nombre = estado.getNombreJugador();
         if (nombre == null || nombre.trim().isEmpty()) {
-            nombre = "JUGADOR";
+            nombre = estado.isDosJugadores() ? "EQUIPO" : "JUGADOR";
         }
-        rotulo(g, "JUGADOR", 826, EstiloBrutal.BLANCO);
-        g.setFont(EstiloBrutal.mono(12));
+        rotulo(g, estado.isDosJugadores() ? "EQUIPO" : "JUGADOR", 826,
+                EstiloBrutal.BLANCO);
+        g.setFont(nombre.length() > 18
+                ? EstiloBrutal.mono(10) : EstiloBrutal.mono(12));
         g.setColor(EstiloBrutal.GRIS_CLARO);
         int ancho = g.getFontMetrics().stringWidth(nombre);
         g.drawString(nombre, X_NOMBRE - ancho, Y_TEXTO);
@@ -106,7 +109,7 @@ public final class DibujoHud {
                 g.fillRect(x, Y_VIDAS, TAMANO_VIDA, TAMANO_VIDA);
                 g.setColor(VIDA_PERDIDA);
             }
-            g.setStroke(new BasicStroke(2f));
+            g.setStroke(TRAZO_VIDA);
             g.drawRect(x, Y_VIDAS, TAMANO_VIDA, TAMANO_VIDA);
         }
     }

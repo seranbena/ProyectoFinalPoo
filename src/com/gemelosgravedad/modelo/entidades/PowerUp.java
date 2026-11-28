@@ -1,5 +1,7 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
+import com.gemelosgravedad.modelo.datos.TipoPowerUp;
+import com.gemelosgravedad.modelo.juego.PoderActivo;
 import com.gemelosgravedad.recursos.GestorRecursos;
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +18,7 @@ import java.awt.Image;
  * @see TipoPowerUp
  * @see PoderActivo
  */
-public class PowerUp extends ObjetoFlotante {
+public final class PowerUp extends ObjetoFlotante {
 
     private static final Color NEGRO = new Color(18, 18, 18);
     private static final Color SOMBRA = new Color(0, 0, 0, 90);

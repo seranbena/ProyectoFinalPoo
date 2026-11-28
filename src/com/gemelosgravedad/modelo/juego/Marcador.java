@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.juego;
 
 import com.gemelosgravedad.util.FormatoTiempo;
 
@@ -24,21 +24,16 @@ public class Marcador {
     /** Segundos que deben transcurrir para subir de nivel. */
     public static final int SEGUNDOS_POR_NIVEL = 10;
 
-    private int vidas;
+    private int vidas = VIDAS_INICIALES;
     private int puntaje;
     private int segundos;
     private int segundosInvulnerable;
     private boolean juegoTerminado;
 
     /**
-     * Crea un marcador en el estado inicial de una partida.
+     * Crea un marcador con las vidas iniciales y los contadores a cero.
      */
     public Marcador() {
-        vidas = VIDAS_INICIALES;
-        puntaje = 0;
-        segundos = 0;
-        segundosInvulnerable = 0;
-        juegoTerminado = false;
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.gemelosgravedad.controlador;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
 import com.gemelosgravedad.vista.PanelJuego;
 import javax.swing.Timer;
 

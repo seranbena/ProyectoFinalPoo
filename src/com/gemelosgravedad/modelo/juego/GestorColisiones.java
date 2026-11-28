@@ -1,5 +1,12 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.juego;
 
+import com.gemelosgravedad.modelo.datos.Efecto;
+import com.gemelosgravedad.modelo.entidades.Cristal;
+import com.gemelosgravedad.modelo.entidades.Enemigo;
+import com.gemelosgravedad.modelo.entidades.Entidad;
+import com.gemelosgravedad.modelo.entidades.Jugador;
+import com.gemelosgravedad.modelo.entidades.OrbeCambio;
+import com.gemelosgravedad.modelo.entidades.PowerUp;
 import java.util.List;
 
 /**
@@ -47,6 +54,10 @@ public class GestorColisiones {
 
     /**
      * Recorre las entidades y resuelve las colisiones con los dos gemelos.
+     *
+     * <p>El {@code switch} es exhaustivo porque la jerarquia de {@link Entidad}
+     * esta sellada: si se agrega un tipo nuevo, el compilador obliga a tratarlo
+     * aqui.</p>
      */
     public void revisar() {
         for (int i = entidades.size() - 1; i >= 0; i--) {
@@ -56,14 +67,14 @@ public class GestorColisiones {
             if (!golpea) {
                 continue;
             }
-            if (entidad instanceof Cristal cristal) {
-                recogerCristal(cristal, i);
-            } else if (entidad instanceof PowerUp powerUp) {
-                recogerPowerUp(powerUp, i);
-            } else if (entidad instanceof OrbeCambio orbe) {
-                recogerOrbe(orbe, i);
-            } else if (entidad instanceof Enemigo) {
-                chocarConEnemigo(i);
+            switch (entidad) {
+                case Cristal cristal -> recogerCristal(cristal, i);
+                case PowerUp powerUp -> recogerPowerUp(powerUp, i);
+                case OrbeCambio orbe -> recogerOrbe(orbe, i);
+                case Enemigo enemigo -> chocarConEnemigo(i);
+                case Jugador jugador -> {
+                    // Los gemelos no colisionan contra si mismos.
+                }
             }
         }
     }
@@ -75,9 +86,7 @@ public class GestorColisiones {
      * @param indice posicion del cristal en la lista
      */
     private void recogerCristal(Cristal cristal, int indice) {
-        marcador.sumarPuntos(cristal.getValor());
-        efectos.add(Efecto.CRISTAL);
-        entidades.remove(indice);
+        consumir(indice, cristal.getValor(), Efecto.CRISTAL);
     }
 
     /**
@@ -88,8 +97,7 @@ public class GestorColisiones {
      */
     private void recogerPowerUp(PowerUp powerUp, int indice) {
         poder.activar(powerUp.getTipo(), jugadorPiso, jugadorTecho);
-        efectos.add(Efecto.POWER_UP);
-        entidades.remove(indice);
+        consumir(indice, 0, Efecto.POWER_UP);
     }
 
     /**
@@ -103,9 +111,7 @@ public class GestorColisiones {
         if (!jugadorPiso.isColgando() && !jugadorTecho.isColgando()) {
             jugadorPiso.intercambiarCon(jugadorTecho);
         }
-        marcador.sumarPuntos(orbe.getValor());
-        efectos.add(Efecto.POWER_UP);
-        entidades.remove(indice);
+        consumir(indice, orbe.getValor(), Efecto.POWER_UP);
     }
 
     /**
@@ -115,23 +121,33 @@ public class GestorColisiones {
      */
     private void chocarConEnemigo(int indice) {
         if (jugadorPiso.isTurbo()) {
-            marcador.sumarPuntos(PUNTOS_ENEMIGO_TURBO);
-            entidades.remove(indice);
-            efectos.add(Efecto.GOLPE);
+            consumir(indice, PUNTOS_ENEMIGO_TURBO, Efecto.GOLPE);
             return;
         }
         if (jugadorPiso.isEscudo()) {
             poder.desactivar(jugadorPiso, jugadorTecho);
             marcador.darInvulnerabilidad(SEGUNDOS_INVULNERABILIDAD_ESCUDO);
-            entidades.remove(indice);
-            efectos.add(Efecto.GOLPE);
+            consumir(indice, 0, Efecto.GOLPE);
             return;
         }
         if (marcador.isInvulnerable()) {
             return;
         }
         marcador.perderVida();
+        consumir(indice, 0,
+                marcador.isJuegoTerminado() ? Efecto.GAME_OVER : Efecto.GOLPE);
+    }
+
+    /**
+     * Aplica puntos y efecto, y retira la entidad consumida de la partida.
+     *
+     * @param indice posicion de la entidad en la lista
+     * @param puntos puntos que otorga el objeto
+     * @param efecto efecto sonoro que se debe reproducir
+     */
+    private void consumir(int indice, int puntos, Efecto efecto) {
+        marcador.sumarPuntos(puntos);
+        efectos.add(efecto);
         entidades.remove(indice);
-        efectos.add(marcador.isJuegoTerminado() ? Efecto.GAME_OVER : Efecto.GOLPE);
     }
 }

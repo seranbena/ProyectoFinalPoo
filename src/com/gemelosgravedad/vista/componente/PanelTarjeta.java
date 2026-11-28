@@ -24,6 +24,7 @@ public final class PanelTarjeta extends JPanel {
     private static final int BORDE = 4;
     private static final int BARRA_ACENTO = 10;
     private static final int MARGEN_ACENTO = 7;
+    private static final BasicStroke TRAZO_BORDE = new BasicStroke(BORDE);
 
     /** Color de relleno de la tarjeta. */
     private final Color colorFondo;
@@ -67,7 +68,7 @@ public final class PanelTarjeta extends JPanel {
             g2.fillRect(0, 0, ancho, alto);
 
             g2.setColor(EstiloBrutal.NEGRO);
-            g2.setStroke(new BasicStroke(BORDE));
+            g2.setStroke(TRAZO_BORDE);
             g2.drawRect(2, 2, ancho - 4, alto - 4);
 
             g2.setColor(colorAcento);

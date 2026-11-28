@@ -1,5 +1,7 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
+import com.gemelosgravedad.modelo.interfaces.Actualizable;
+import com.gemelosgravedad.modelo.interfaces.Dibujable;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
@@ -15,7 +17,8 @@ import java.awt.Polygon;
  * @see EntidadDesplazable
  * @see Jugador
  */
-public abstract class Entidad {
+public abstract sealed class Entidad implements Actualizable, Dibujable
+        permits Jugador, EntidadDesplazable {
 
     /** Fotogramas que se mantiene visible cada cuadro de una animacion. */
     private static final int FOTOGRAMAS_POR_CUADRO = 8;
@@ -59,6 +62,7 @@ public abstract class Entidad {
     /**
      * Actualiza el estado de la entidad en un paso de simulacion.
      */
+    @Override
     public abstract void actualizar();
 
     /**
@@ -66,6 +70,7 @@ public abstract class Entidad {
      *
      * @param g contexto grafico de la partida
      */
+    @Override
     public abstract void dibujar(Graphics2D g);
 
     /**

@@ -1,7 +1,7 @@
 package com.gemelosgravedad.vista.pantalla;
 
-import com.gemelosgravedad.modelo.Puntaje;
-import com.gemelosgravedad.modelo.RegistroPartida;
+import com.gemelosgravedad.modelo.datos.Puntaje;
+import com.gemelosgravedad.modelo.datos.RegistroPartida;
 import com.gemelosgravedad.vista.componente.BarraBrutal;
 import com.gemelosgravedad.vista.componente.BotonEstilo;
 import com.gemelosgravedad.vista.componente.EstiloBrutal;
@@ -103,12 +103,13 @@ public final class PantallaTop3 extends PantallaBase {
         filas.removeAll();
         agregarCabecera();
 
-        if (lista == null || lista.isEmpty()) {
+        List<Puntaje> resultados = lista == null ? List.of() : lista;
+        if (resultados.isEmpty()) {
             mostrarVacio();
         } else {
-            for (int i = 0; i < lista.size(); i++) {
-                filas.add(crearFila(i + 1, lista.get(i)));
-                if (i < lista.size() - 1) {
+            for (int i = 0; i < resultados.size(); i++) {
+                filas.add(crearFila(i + 1, resultados.get(i)));
+                if (i < resultados.size() - 1) {
                     filas.add(Box.createVerticalStrut(9));
                 }
             }
@@ -148,7 +149,7 @@ public final class PantallaTop3 extends PantallaBase {
         cabecera.setBorder(BorderFactory.createEmptyBorder(0, 12, 6, 18));
         cabecera.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
 
-        JLabel izquierda = new JLabel("JUGADOR");
+        JLabel izquierda = new JLabel("JUGADOR / EQUIPO");
         izquierda.setFont(EstiloBrutal.mono(10));
         izquierda.setForeground(EstiloBrutal.GRIS);
         cabecera.add(izquierda, BorderLayout.WEST);
@@ -171,20 +172,8 @@ public final class PantallaTop3 extends PantallaBase {
      * @return tarjeta de la fila
      */
     private JPanel crearFila(int puesto, Puntaje puntaje) {
-        Color relleno = EstiloBrutal.BLANCO;
-        Color acento = EstiloBrutal.AZUL;
-        if (puesto == 1) {
-            relleno = EstiloBrutal.AMARILLO;
-            acento = EstiloBrutal.NEGRO;
-        } else if (puesto == 2) {
-            relleno = EstiloBrutal.PAPEL;
-            acento = EstiloBrutal.AZUL;
-        } else if (puesto == 3) {
-            relleno = TERCER_PUESTO;
-            acento = EstiloBrutal.NARANJA;
-        }
-
-        PanelTarjeta fila = new PanelTarjeta(relleno, acento);
+        EstiloPuesto estilo = estiloPuesto(puesto);
+        PanelTarjeta fila = new PanelTarjeta(estilo.relleno(), estilo.acento());
         fila.setLayout(new BorderLayout(14, 0));
         fila.setBorder(BorderFactory.createEmptyBorder(6, 22, 6, 18));
         fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 78));
@@ -192,14 +181,14 @@ public final class PantallaTop3 extends PantallaBase {
         JLabel rango = new JLabel(String.valueOf(puesto), SwingConstants.CENTER);
         rango.setOpaque(true);
         rango.setBackground(EstiloBrutal.NEGRO);
-        rango.setForeground(relleno);
+        rango.setForeground(estilo.relleno());
         rango.setFont(EstiloBrutal.titulo(24));
         rango.setPreferredSize(new Dimension(ANCHO_RANGO, ALTO_RANGO));
         rango.setMinimumSize(new Dimension(ANCHO_RANGO, ALTO_RANGO));
         rango.setMaximumSize(new Dimension(ANCHO_RANGO, ALTO_RANGO));
         fila.add(rango, BorderLayout.WEST);
 
-        JLabel nombre = new JLabel(puntaje.getNombre());
+        JLabel nombre = new JLabel(puntaje.nombre());
         nombre.setFont(EstiloBrutal.mono(18));
         nombre.setForeground(EstiloBrutal.NEGRO);
         fila.add(nombre, BorderLayout.CENTER);
@@ -210,7 +199,7 @@ public final class PantallaTop3 extends PantallaBase {
         datos.setPreferredSize(new Dimension(ANCHO_DATOS, 52));
         datos.setMaximumSize(new Dimension(ANCHO_DATOS, 52));
 
-        JLabel puntos = new JLabel(puntaje.getPuntos() + " PTS",
+        JLabel puntos = new JLabel(puntaje.puntos() + " PTS",
                 SwingConstants.RIGHT);
         puntos.setFont(EstiloBrutal.titulo(20));
         puntos.setForeground(EstiloBrutal.NEGRO);
@@ -231,6 +220,30 @@ public final class PantallaTop3 extends PantallaBase {
 
         fila.add(datos, BorderLayout.EAST);
         return fila;
+    }
+
+    /**
+     * Devuelve los colores de una fila segun el puesto.
+     *
+     * @param puesto posicion en la tabla, empezando en uno
+     * @return colores de relleno y acento
+     */
+    private static EstiloPuesto estiloPuesto(int puesto) {
+        return switch (puesto) {
+            case 1 -> new EstiloPuesto(EstiloBrutal.AMARILLO, EstiloBrutal.NEGRO);
+            case 2 -> new EstiloPuesto(EstiloBrutal.PAPEL, EstiloBrutal.AZUL);
+            case 3 -> new EstiloPuesto(TERCER_PUESTO, EstiloBrutal.NARANJA);
+            default -> new EstiloPuesto(EstiloBrutal.BLANCO, EstiloBrutal.AZUL);
+        };
+    }
+
+    /**
+     * Colores de una fila del Top 3.
+     *
+     * @param relleno color de fondo
+     * @param acento  color de la barra lateral
+     */
+    private record EstiloPuesto(Color relleno, Color acento) {
     }
 
     /**

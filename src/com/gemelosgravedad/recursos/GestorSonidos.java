@@ -3,6 +3,7 @@ package com.gemelosgravedad.recursos;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +20,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  *
  * <p>Si un archivo falta o el sistema de audio no esta disponible, el sonido se
  * ignora y el juego continua. Las claves publicas se comparten con
- * {@link com.gemelosgravedad.modelo.Efecto} para no duplicar literales.</p>
+ * {@link com.gemelosgravedad.modelo.datos.Efecto} para no duplicar literales.</p>
  *
  * @see LocalizadorRecursos
  */
@@ -55,11 +56,8 @@ public final class GestorSonidos {
      * Carga todos los efectos y la musica de fondo.
      */
     public static void cargarTodos() {
-        cargar(SALTO);
-        cargar(CRISTAL);
-        cargar(GOLPE);
-        cargar(GAME_OVER);
-        cargar(POWER_UP);
+        List.of(SALTO, CRISTAL, GOLPE, GAME_OVER, POWER_UP)
+                .forEach(GestorSonidos::cargar);
         musica = cargarClip(CARPETA_SONIDOS + MUSICA + EXTENSION);
         if (musica != null) {
             ajustarVolumen(musica, VOLUMEN_MUSICA);
@@ -108,7 +106,7 @@ public final class GestorSonidos {
      *
      * @param clave clave del sonido que se quiere reproducir
      */
-    public static void reproducir(String clave) {
+    public static synchronized void reproducir(String clave) {
         Clip clip = SONIDOS.get(clave);
         if (clip == null) {
             return;
@@ -123,7 +121,7 @@ public final class GestorSonidos {
     /**
      * Inicia la musica de fondo en bucle si aun no esta sonando.
      */
-    public static void reproducirMusica() {
+    public static synchronized void reproducirMusica() {
         if (musica == null || musica.isRunning()) {
             return;
         }
@@ -134,7 +132,7 @@ public final class GestorSonidos {
     /**
      * Detiene la musica de fondo.
      */
-    public static void detenerMusica() {
+    public static synchronized void detenerMusica() {
         if (musica != null && musica.isRunning()) {
             musica.stop();
         }

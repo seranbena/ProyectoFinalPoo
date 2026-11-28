@@ -1,10 +1,11 @@
 package com.gemelosgravedad.vista;
 
-import com.gemelosgravedad.modelo.EstadoJuego;
+import com.gemelosgravedad.modelo.juego.EstadoJuego;
 import com.gemelosgravedad.recursos.GestorRecursos;
 import com.gemelosgravedad.vista.pantalla.PantallaBienvenida;
 import com.gemelosgravedad.vista.pantalla.PantallaGameOver;
 import com.gemelosgravedad.vista.pantalla.PantallaInstrucciones;
+import com.gemelosgravedad.vista.pantalla.PantallaModo;
 import com.gemelosgravedad.vista.pantalla.PantallaNombre;
 import com.gemelosgravedad.vista.pantalla.PantallaTop3;
 import java.awt.CardLayout;
@@ -31,6 +32,7 @@ public final class VentanaPrincipal extends JFrame {
 
     private static final String BIENVENIDA = "BIENVENIDA";
     private static final String INSTRUCCIONES = "INSTRUCCIONES";
+    private static final String MODO = "MODO";
     private static final String NOMBRE = "NOMBRE";
     private static final String JUEGO = "JUEGO";
     private static final String GAME_OVER = "GAME_OVER";
@@ -47,6 +49,9 @@ public final class VentanaPrincipal extends JFrame {
 
     /** Manual de operaciones. */
     private final PantallaInstrucciones pantallaInstrucciones;
+
+    /** Seleccion entre uno y dos jugadores. */
+    private final PantallaModo pantallaModo;
 
     /** Formulario de identificacion del jugador. */
     private final PantallaNombre pantallaNombre;
@@ -80,6 +85,7 @@ public final class VentanaPrincipal extends JFrame {
 
         pantallaBienvenida = new PantallaBienvenida();
         pantallaInstrucciones = new PantallaInstrucciones();
+        pantallaModo = new PantallaModo();
         pantallaNombre = new PantallaNombre();
         panelJuego = new PanelJuego();
         pantallaGameOver = new PantallaGameOver();
@@ -87,6 +93,7 @@ public final class VentanaPrincipal extends JFrame {
 
         contenedor.add(pantallaBienvenida, BIENVENIDA);
         contenedor.add(pantallaInstrucciones, INSTRUCCIONES);
+        contenedor.add(pantallaModo, MODO);
         contenedor.add(pantallaNombre, NOMBRE);
         contenedor.add(panelJuego, JUEGO);
         contenedor.add(pantallaGameOver, GAME_OVER);
@@ -113,10 +120,19 @@ public final class VentanaPrincipal extends JFrame {
     }
 
     /**
-     * Prepara y muestra la pantalla de nombre.
+     * Muestra la seleccion entre uno y dos jugadores.
      */
-    public void mostrarNombre() {
-        pantallaNombre.preparar();
+    public void mostrarModo() {
+        tarjetas.show(contenedor, MODO);
+    }
+
+    /**
+     * Prepara y muestra la pantalla de nombres.
+     *
+     * @param dosJugadores {@code true} para pedir dos nombres
+     */
+    public void mostrarNombre(boolean dosJugadores) {
+        pantallaNombre.preparar(dosJugadores);
         tarjetas.show(contenedor, NOMBRE);
     }
 
@@ -158,6 +174,15 @@ public final class VentanaPrincipal extends JFrame {
      */
     public PantallaInstrucciones getPantallaInstrucciones() {
         return pantallaInstrucciones;
+    }
+
+    /**
+     * Devuelve la pantalla de seleccion de modo.
+     *
+     * @return pantalla de modo
+     */
+    public PantallaModo getPantallaModo() {
+        return pantallaModo;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.gemelosgravedad.modelo;
+package com.gemelosgravedad.modelo.entidades;
 
 import com.gemelosgravedad.recursos.GestorRecursos;
 
@@ -13,7 +13,8 @@ import com.gemelosgravedad.recursos.GestorRecursos;
  * @see EnemigoTecho
  * @see EnemigoVolador
  */
-public abstract class Enemigo extends EntidadDesplazable {
+public abstract sealed class Enemigo extends EntidadDesplazable
+        permits EnemigoCaminante, EnemigoTecho, EnemigoVolador {
 
     /**
      * Crea un enemigo y carga su animacion.
@@ -30,5 +31,17 @@ public abstract class Enemigo extends EntidadDesplazable {
                       String carpetaSprites, int cantidadCuadros) {
         super(x, y, ancho, alto, velocidad);
         this.sprites = GestorRecursos.cargarCuadros(carpetaSprites, cantidadCuadros);
+    }
+
+    /**
+     * Aumenta la velocidad de avance del enemigo.
+     *
+     * <p>La regla de dificultad vive en {@code EstadoJuego}; este metodo
+     * mantiene encapsulado el ajuste de velocidad de la jerarquia.</p>
+     *
+     * @param incremento pixeles adicionales por paso
+     */
+    public void acelerar(double incremento) {
+        aumentarVelocidad(incremento);
     }
 }
